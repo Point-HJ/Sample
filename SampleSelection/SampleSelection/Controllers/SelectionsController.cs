@@ -25,7 +25,7 @@ namespace SampleSelection.Controllers
 
         // GET: api/Selections/5
         [ResponseType(typeof(Selection))]
-        public async Task<IHttpActionResult> GetSelection(long id)
+        public async Task<IHttpActionResult> GetSelection(int id)
         {
             Selection selection = await db.Selection.FindAsync(id);
             if (selection == null)
@@ -38,14 +38,14 @@ namespace SampleSelection.Controllers
 
         // PUT: api/Selections/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutSelection(long id, Selection selection)
+        public async Task<IHttpActionResult> PutSelection(int id, Selection selection)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != selection.ISBN)
+            if (id != selection.BookID)
             {
                 return BadRequest();
             }
@@ -81,29 +81,14 @@ namespace SampleSelection.Controllers
             }
 
             db.Selection.Add(selection);
+            await db.SaveChangesAsync();
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (SelectionExists(selection.ISBN))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtRoute("DefaultApi", new { id = selection.ISBN }, selection);
+            return CreatedAtRoute("DefaultApi", new { id = selection.BookID }, selection);
         }
 
         // DELETE: api/Selections/5
         [ResponseType(typeof(Selection))]
-        public async Task<IHttpActionResult> DeleteSelection(long id)
+        public async Task<IHttpActionResult> DeleteSelection(int id)
         {
             Selection selection = await db.Selection.FindAsync(id);
             if (selection == null)
@@ -126,9 +111,9 @@ namespace SampleSelection.Controllers
             base.Dispose(disposing);
         }
 
-        private bool SelectionExists(long id)
+        private bool SelectionExists(int id)
         {
-            return db.Selection.Count(e => e.ISBN == id) > 0;
+            return db.Selection.Count(e => e.BookID == id) > 0;
         }
     }
 }

@@ -12,18 +12,9 @@ namespace SampleSelection.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class NVOrderRows
+    public partial class SelectionLang
     {
-        public int OrderID { get; set; }
-        public System.DateTime OrderDate { get; set; }
-        public string CompanyID { get; set; }
-        public long ISBN { get; set; }
-        public string BookName { get; set; }
-        public decimal Price { get; set; }
-        public string Season { get; set; }
-        public string CustReference { get; set; }
-    
-        public virtual Selection Selection { get; set; }
-        public virtual Users Users { get; set; }
+        public int LangID { get; set; }
+        public string Language { get; set; }
     }
 }

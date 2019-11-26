@@ -12,17 +12,15 @@ namespace SampleSelection.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Seasons
+    public partial class Cart
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Seasons()
-        {
-            this.Selection = new HashSet<Selection>();
-        }
-    
-        public string Season { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Selection> Selection { get; set; }
+        public int OrderID { get; set; }
+        public System.DateTime OrderDate { get; set; }
+        public int CompanyID { get; set; }
+        public long ISBN { get; set; }
+        public string BookName { get; set; }
+        public decimal Price { get; set; }
+        public string CustRef { get; set; }
+        public bool IsInCart { get; set; }
     }
 }

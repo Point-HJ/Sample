@@ -13,44 +13,44 @@ using SampleSelection.Models;
 
 namespace SampleSelection.Controllers
 {
-    public class SeasonsController : ApiController
+    public class CartsController : ApiController
     {
         private NaytevarastoEntities db = new NaytevarastoEntities();
 
-        // GET: api/Seasons
-        public IQueryable<Season> GetSeason()
+        // GET: api/Carts
+        public IQueryable<Cart> GetCart()
         {
-            return db.Season;
+            return db.Cart;
         }
 
-        // GET: api/Seasons/5
-        [ResponseType(typeof(Season))]
-        public async Task<IHttpActionResult> GetSeason(int id)
+        // GET: api/Carts/5
+        [ResponseType(typeof(Cart))]
+        public async Task<IHttpActionResult> GetCart(int id)
         {
-            Season season = await db.Season.FindAsync(id);
-            if (season == null)
+            Cart cart = await db.Cart.FindAsync(id);
+            if (cart == null)
             {
                 return NotFound();
             }
 
-            return Ok(season);
+            return Ok(cart);
         }
 
-        // PUT: api/Seasons/5
+        // PUT: api/Carts/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutSeason(int id, Season season)
+        public async Task<IHttpActionResult> PutCart(int id, Cart cart)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != season.SeasonID)
+            if (id != cart.OrderID)
             {
                 return BadRequest();
             }
 
-            db.Entry(season).State = EntityState.Modified;
+            db.Entry(cart).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +58,7 @@ namespace SampleSelection.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SeasonExists(id))
+                if (!CartExists(id))
                 {
                     return NotFound();
                 }
@@ -71,35 +71,35 @@ namespace SampleSelection.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Seasons
-        [ResponseType(typeof(Season))]
-        public async Task<IHttpActionResult> PostSeason(Season season)
+        // POST: api/Carts
+        [ResponseType(typeof(Cart))]
+        public async Task<IHttpActionResult> PostCart(Cart cart)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Season.Add(season);
+            db.Cart.Add(cart);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = season.SeasonID }, season);
+            return CreatedAtRoute("DefaultApi", new { id = cart.OrderID }, cart);
         }
 
-        // DELETE: api/Seasons/5
-        [ResponseType(typeof(Season))]
-        public async Task<IHttpActionResult> DeleteSeason(int id)
+        // DELETE: api/Carts/5
+        [ResponseType(typeof(Cart))]
+        public async Task<IHttpActionResult> DeleteCart(int id)
         {
-            Season season = await db.Season.FindAsync(id);
-            if (season == null)
+            Cart cart = await db.Cart.FindAsync(id);
+            if (cart == null)
             {
                 return NotFound();
             }
 
-            db.Season.Remove(season);
+            db.Cart.Remove(cart);
             await db.SaveChangesAsync();
 
-            return Ok(season);
+            return Ok(cart);
         }
 
         protected override void Dispose(bool disposing)
@@ -111,9 +111,9 @@ namespace SampleSelection.Controllers
             base.Dispose(disposing);
         }
 
-        private bool SeasonExists(int id)
+        private bool CartExists(int id)
         {
-            return db.Season.Count(e => e.SeasonID == id) > 0;
+            return db.Cart.Count(e => e.OrderID == id) > 0;
         }
     }
 }

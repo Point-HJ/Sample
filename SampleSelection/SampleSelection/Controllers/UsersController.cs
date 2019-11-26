@@ -13,6 +13,7 @@ using SampleSelection.Models;
 
 namespace SampleSelection.Controllers
 {
+
     public class UsersController : ApiController
     {
         private NaytevarastoEntities db = new NaytevarastoEntities();
@@ -25,7 +26,7 @@ namespace SampleSelection.Controllers
 
         // GET: api/Users/5
         [ResponseType(typeof(Users))]
-        public async Task<IHttpActionResult> GetUsers(string id)
+        public async Task<IHttpActionResult> GetUsers(int id)
         {
             Users users = await db.Users.FindAsync(id);
             if (users == null)
@@ -38,14 +39,14 @@ namespace SampleSelection.Controllers
 
         // PUT: api/Users/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutUsers(string id, Users users)
+        public async Task<IHttpActionResult> PutUsers(int id, Users users)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != users.CompanyID)
+            if (id != users.UserID)
             {
                 return BadRequest();
             }
@@ -81,29 +82,14 @@ namespace SampleSelection.Controllers
             }
 
             db.Users.Add(users);
+            await db.SaveChangesAsync();
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UsersExists(users.CompanyID))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtRoute("DefaultApi", new { id = users.CompanyID }, users);
+            return CreatedAtRoute("DefaultApi", new { id = users.UserID }, users);
         }
 
         // DELETE: api/Users/5
         [ResponseType(typeof(Users))]
-        public async Task<IHttpActionResult> DeleteUsers(string id)
+        public async Task<IHttpActionResult> DeleteUsers(int id)
         {
             Users users = await db.Users.FindAsync(id);
             if (users == null)
@@ -126,9 +112,9 @@ namespace SampleSelection.Controllers
             base.Dispose(disposing);
         }
 
-        private bool UsersExists(string id)
+        private bool UsersExists(int id)
         {
-            return db.Users.Count(e => e.CompanyID == id) > 0;
+            return db.Users.Count(e => e.UserID == id) > 0;
         }
     }
 }

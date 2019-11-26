@@ -13,44 +13,44 @@ using SampleSelection.Models;
 
 namespace SampleSelection.Controllers
 {
-    public class NVOrderRowsController : ApiController
+    public class SelectionLangsController : ApiController
     {
         private NaytevarastoEntities db = new NaytevarastoEntities();
 
-        // GET: api/NVOrderRows
-        public IQueryable<NVOrderRows> GetNVOrderRows()
+        // GET: api/SelectionLangs
+        public IQueryable<SelectionLang> GetSelectionLang()
         {
-            return db.NVOrderRows;
+            return db.SelectionLang;
         }
 
-        // GET: api/NVOrderRows/5
-        [ResponseType(typeof(NVOrderRows))]
-        public async Task<IHttpActionResult> GetNVOrderRows(int id)
+        // GET: api/SelectionLangs/5
+        [ResponseType(typeof(SelectionLang))]
+        public async Task<IHttpActionResult> GetSelectionLang(int id)
         {
-            NVOrderRows nVOrderRows = await db.NVOrderRows.FindAsync(id);
-            if (nVOrderRows == null)
+            SelectionLang selectionLang = await db.SelectionLang.FindAsync(id);
+            if (selectionLang == null)
             {
                 return NotFound();
             }
 
-            return Ok(nVOrderRows);
+            return Ok(selectionLang);
         }
 
-        // PUT: api/NVOrderRows/5
+        // PUT: api/SelectionLangs/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutNVOrderRows(int id, NVOrderRows nVOrderRows)
+        public async Task<IHttpActionResult> PutSelectionLang(int id, SelectionLang selectionLang)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != nVOrderRows.OrderID)
+            if (id != selectionLang.LangID)
             {
                 return BadRequest();
             }
 
-            db.Entry(nVOrderRows).State = EntityState.Modified;
+            db.Entry(selectionLang).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +58,7 @@ namespace SampleSelection.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NVOrderRowsExists(id))
+                if (!SelectionLangExists(id))
                 {
                     return NotFound();
                 }
@@ -71,35 +71,35 @@ namespace SampleSelection.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/NVOrderRows
-        [ResponseType(typeof(NVOrderRows))]
-        public async Task<IHttpActionResult> PostNVOrderRows(NVOrderRows nVOrderRows)
+        // POST: api/SelectionLangs
+        [ResponseType(typeof(SelectionLang))]
+        public async Task<IHttpActionResult> PostSelectionLang(SelectionLang selectionLang)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.NVOrderRows.Add(nVOrderRows);
+            db.SelectionLang.Add(selectionLang);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = nVOrderRows.OrderID }, nVOrderRows);
+            return CreatedAtRoute("DefaultApi", new { id = selectionLang.LangID }, selectionLang);
         }
 
-        // DELETE: api/NVOrderRows/5
-        [ResponseType(typeof(NVOrderRows))]
-        public async Task<IHttpActionResult> DeleteNVOrderRows(int id)
+        // DELETE: api/SelectionLangs/5
+        [ResponseType(typeof(SelectionLang))]
+        public async Task<IHttpActionResult> DeleteSelectionLang(int id)
         {
-            NVOrderRows nVOrderRows = await db.NVOrderRows.FindAsync(id);
-            if (nVOrderRows == null)
+            SelectionLang selectionLang = await db.SelectionLang.FindAsync(id);
+            if (selectionLang == null)
             {
                 return NotFound();
             }
 
-            db.NVOrderRows.Remove(nVOrderRows);
+            db.SelectionLang.Remove(selectionLang);
             await db.SaveChangesAsync();
 
-            return Ok(nVOrderRows);
+            return Ok(selectionLang);
         }
 
         protected override void Dispose(bool disposing)
@@ -111,9 +111,9 @@ namespace SampleSelection.Controllers
             base.Dispose(disposing);
         }
 
-        private bool NVOrderRowsExists(int id)
+        private bool SelectionLangExists(int id)
         {
-            return db.NVOrderRows.Count(e => e.OrderID == id) > 0;
+            return db.SelectionLang.Count(e => e.LangID == id) > 0;
         }
     }
 }

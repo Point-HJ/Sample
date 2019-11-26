@@ -26,7 +26,7 @@
                 dataType: 'json',
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Suomi') {
+                        if (val.Language == 'Ruotsi') {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
@@ -56,12 +56,13 @@
                     $(".glyphicon-shopping-cart").on("click", function () {
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
-                       
+
                         $.ajax({
                             type: 'GET',
                             url: 'api/selections/' + BookID,
                             dataType: 'json',
                             success: function (sel) {
+
                                 var toCart = {
                                     CompanyID: "123456",
                                     OrderDate: getdate(),
@@ -76,14 +77,17 @@
                                     url: 'api/Carts',
                                     data: toCart,
                                     success: function () {
-                                        console.log('Lisätty koriin ' +BookID);
+                                        console.log('Lisätty koriin ' + BookID);
                                     },
                                     error: function () {
                                         alert('Virhe!');
                                     }
                                 });
+
+
                             }
                         });
+
                     });
                 },
                 error: function () {
@@ -137,7 +141,7 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h2>Suomenkielinen valikoima</h2>
+                    <h2>Ruotsinkielinen valikoima</h2>
                     <table class="table table-bordered">
                         <thead>
                             <tr>

@@ -25,9 +25,10 @@ namespace SampleSelection.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<NVOrderRows> NVOrderRows { get; set; }
-        public virtual DbSet<Seasons> Seasons { get; set; }
+        public virtual DbSet<Cart> Cart { get; set; }
+        public virtual DbSet<Season> Season { get; set; }
         public virtual DbSet<Selection> Selection { get; set; }
+        public virtual DbSet<SelectionLang> SelectionLang { get; set; }
         public virtual DbSet<Users> Users { get; set; }
     }
 }

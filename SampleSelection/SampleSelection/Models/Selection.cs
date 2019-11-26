@@ -14,22 +14,13 @@ namespace SampleSelection.Models
     
     public partial class Selection
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Selection()
-        {
-            this.NVOrderRows = new HashSet<NVOrderRows>();
-        }
-    
         public int BookID { get; set; }
         public long ISBN { get; set; }
         public string Author { get; set; }
         public string BookName { get; set; }
         public string Publisher { get; set; }
-        public decimal Price { get; set; }
+        public Nullable<decimal> Price { get; set; }
+        public string Language { get; set; }
         public string Season { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<NVOrderRows> NVOrderRows { get; set; }
-        public virtual Seasons Seasons { get; set; }
     }
 }
