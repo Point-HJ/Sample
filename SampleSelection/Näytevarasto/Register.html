@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekisteröityminen</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="Content/MyStyle.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('#btnRegister').click(function () {
+                $.ajax({
+                    url: '/api/account/register',
+                    method: 'post',
+                    data: {
+                        CompanyID: $('#txtCompanyID').val(),
+                        CompanyName: $('#txtCompanyName').val(),
+                        Email: $('#txtEmail').val(),
+                        Password: $('#txtPassword').val(),
+                        ConfirmPassword: $('#txtConfirmPassword').val(),
+                    },
+                    success: function () {
+                        console.log('OK');
+                        location.href = "login.html";
+                    },
+                    error: function (jqXHR) {
+                        console.log(jqXHR.responseText);
+                    }
+                });
+
+            });
+        });
+
+    </script>
+
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="success">
+                        <td colspan="2">
+                            Uusi rekisteröityminen
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CompanyID</td>
+                        <td>
+                            <input type="text" id="txtCompanyID" placeholder="CompanyID" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CompanyName</td>
+                        <td>
+                            <input type="text" id="txtCompanyName" placeholder="CompanyName" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input type="text" id="txtEmail" placeholder="Email" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>
+                            <input type="password" id="txtPassword" placeholder="Password" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Confirm password</td>
+                        <td>
+                            <input type="password" id="txtConfirmPassword" placeholder="Confirm password" />
+                        </td>
+                    </tr>
+                    <tr class="success">
+                        <td colspan="2">
+                            <input id="btnRegister" class="btn btn-success" type="button" value="Register" />
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

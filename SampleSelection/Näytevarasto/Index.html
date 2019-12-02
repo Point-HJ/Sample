@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Näytevarasto</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="Content/MyStyle.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        //Lataa tietoja -teksti
+        $(document).ajaxStart(function () {
+            $("#loading").show();
+        }).ajaxStop(function () {
+            $("#loading").hide('slow');
+        });
+
+        //sivun alustus
+        $(document).ready(function () {
+            var selection = $('#selection');
+            //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
+            if (localStorage.getItem('accessToken') == null) {
+                location.href = "login.html"
+            }
+            //uloskirjautuminen
+            $('#logout').click(function () {
+                var ok = confirm('Haluatko varmasti kirjautua ulos?');
+                if (ok == true) {
+                    localStorage.clear;
+                    location.href = "login.html";
+                }
+            });
+            $('#companyname').text(JSON.parse(localStorage.getItem('userName')),);
+
+
+            //haetaan suomenkielinen valikoima tietokannasta
+            $.ajax({
+                type: 'GET',
+                url: 'api/Selections',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+                success: function (data) {
+                    $.each(data, function (i, val) {
+                        if (val.Language == 'Suomi') {
+                            //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
+                            selection +=
+                                '<tr >' +
+                                "<td hidden>" + val.BookID + "</td>" +
+                                "<td>" + val.ISBN + "</td>" +
+                                "<td>" + val.Author + "</td>" +
+                                "<td>" + val.BookName + "</td>" +
+                                "<td>" + val.Publisher + "</td>" +
+                                "<td>" + val.Price + "€ </td>" +
+                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart'></span></a></td>" +
+                                '</tr>';
+                        }
+                    });
+                    //näytetään taulukko sivulla
+                    $('#selection_table').append(selection);
+
+                    //kuluvan päivän funktio
+                    function getdate() {
+                        var d = new Date();
+                        var month = d.getMonth() + 1;
+                        var day = d.getDate();
+                        var year = d.getFullYear();
+                        return date = year + '/' +
+                            (('' + month).length < 2 ? '0' : '') + month + '/' +
+                            (('' + day).length < 2 ? '0' : '') + day;
+                    }
+
+                    //klikatessa ostoskoria, korin väri vaihtuu, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin
+                    $(".glyphicon-shopping-cart").on("click", function () {
+                        $(this).css("color", "#29d646");
+                        var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
+
+                        $.ajax({
+                            type: 'GET',
+                            url: 'api/selections/' + BookID,
+                            dataType: 'json',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            },
+                            success: function (sel) {
+                                var toCart = {
+                                    CompanyID: JSON.parse(localStorage.getItem('userName')),
+                                    OrderDate: getdate(),
+                                    ISBN: sel.ISBN,
+                                    BookName: sel.BookName,
+                                    Author: sel.Author,
+                                    Publisher: sel.Publisher,
+                                    Price: sel.Price,
+                                    Season: sel.Season,
+                                    IsInCart: true,
+                                };
+                                $.ajax({
+                                    type: 'post',
+                                    url: 'api/Carts',
+                                    data: toCart,
+                                    success: function () {
+                                        console.log('Lisätty koriin ' + BookID);
+                                    },
+                                    error: function () {
+                                        alert('Virhe!');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                },
+                error: function (jqXHR) {
+                    if (jqXHR.status == "401") {
+                        alert('Kirjaudu uudelleen sisään');
+                        location.href = "login.html";
+                    }
+                    else {
+                        alert('Lataus ei onnistunut, yritä uudelleen')
+                    }
+                }
+            });
+
+            //etsi -toiminto
+            $("#search").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#selection_table tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+
+        });
+
+    </script>
+
+</head>
+<body>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>Näytevarastokauppa</h1>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" id="companyname"></a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="Index.html">Valikoima</a></li>
+                    <li><a href="IndexSVE.html">Svenska val</a></li>
+                    <li><a href="#">Tilaushistoria</a></li>
+                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
+                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="container">
+                    <h2>Suomenkielinen valikoima</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th hidden>BookID</th>
+                                <th>ISBN</th>
+                                <th>Tekijä</th>
+                                <th>Kirjan nimi</th>
+                                <th>Kustantaja</th>
+                                <th>Hinta</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="selection_table"></tbody>
+                    </table>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="form-group">
+                    <div class="container">
+                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <footer class="container-fluid text-center">
+        <p><a href="Selection.html?#">@</a>Näytevarasto 2019</p>
+        <form class="form-inline">
+        </form>
+    </footer>
+
+</body>
+</html>

@@ -13,6 +13,7 @@ using SampleSelection.Models;
 
 namespace SampleSelection.Controllers
 {
+    [Authorize]
     public class SelectionsController : ApiController
     {
         private NaytevarastoEntities db = new NaytevarastoEntities();

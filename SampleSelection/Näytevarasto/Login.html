@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Kirjaudu sisään</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="Content/MyStyle.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('#btnLogin').click(function () {
+                $.ajax({
+                    url: '/token',
+                    method: 'post',
+                    contentType: 'application/json',
+                    data: {
+                        CompanyID: $('#txtCompanyID').val(),
+                        CompanyName: $('#txtCompanyName').val(),
+                        UserName: $('#txtUsername').val(),
+                        Password: $('#txtPassword').val(),
+                        grant_type: 'password'
+                    },
+                    success: function (response) {
+                        localStorage.setItem('accessToken', response.access_token);
+                        localStorage.setItem('userName', JSON.stringify(response.userName));
+                        location.href = "index.html";
+
+                    },
+                    error: function (jqXHR) {
+                        $('#divErrorText').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+                });
+
+            });
+        });
+
+    </script>
+
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="success">
+                        <td colspan="2">
+                            Kirjaudu sisään
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CompanyID</td>
+                        <td>
+                            <input type="text" id="txtCompanyID" placeholder="CompanyID" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CompanyName</td>
+                        <td>
+                            <input type="text" id="txtCompanyName" placeholder="CompanyName" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CompanyID</td>
+                        <td>
+                            <input type="text" id="txtUsername" placeholder="CompanyID" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Salasana</td>
+                        <td>
+                            <input type="password" id="txtPassword" placeholder="Salasana" />
+                        </td>
+
+                    <tr class="success">
+                        <td colspan="2">
+                            <input id="btnLogin" class="btn btn-success" type="button" value="Kirjaudu sisään" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="divError" class="alert alert-danger collapse">
+                <a id="linkClose" href="#" class="close">&times;</a>
+                <div id="divErrorText"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

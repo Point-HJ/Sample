@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSelection", "SampleSelection\SampleSelection.csproj", "{ABC43F12-31EE-4CDD-AD48-F004A0213ED5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Näytevarasto", "Näytevarasto\Näytevarasto.csproj", "{B0B3EE59-BE39-40FA-B2AE-27A1D6F8303E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ABC43F12-31EE-4CDD-AD48-F004A0213ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABC43F12-31EE-4CDD-AD48-F004A0213ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABC43F12-31EE-4CDD-AD48-F004A0213ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABC43F12-31EE-4CDD-AD48-F004A0213ED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B3EE59-BE39-40FA-B2AE-27A1D6F8303E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B3EE59-BE39-40FA-B2AE-27A1D6F8303E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B3EE59-BE39-40FA-B2AE-27A1D6F8303E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B3EE59-BE39-40FA-B2AE-27A1D6F8303E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

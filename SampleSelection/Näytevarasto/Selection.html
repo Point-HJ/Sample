@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Näytevarasto</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link href="Content/MyStyle.css" rel="stylesheet" />
+
+    <script>
+
+        $(document).ajaxStart(function () {
+            $("#loading").show();
+        }).ajaxStop(function () {
+            $("#loading").hide('slow');
+        });
+
+        //haetaan tiedot tietokannasta
+        $(document).ready(function () {
+            var selection = $('#selection');
+            var $mdSelLanguage = $('#mdSelLanguage');
+            var $mdSelSeason = $('#mdSelSeason');
+            var $mdNewSelLanguage = $('#mdNewSelLanguage');
+            var $mdNewSelSeason = $('#mdNewSelSeason');
+
+            function addLanguage(lang) {
+                $mdSelLanguage.append('<option>' + lang.Language1 + '</option>');
+            }
+            function addNewLanguage(lang) {
+                $mdNewSelLanguage.append('<option>' + lang.Language1 + '</option>');
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/api/Languages',
+                dataType: 'json',
+                success: function (langs) {
+                    $.each(langs, function (i, lang) {
+                        addLanguage(lang);
+                        addNewLanguage(lang);
+                    });
+                },
+                error: function () {
+                    alert: ('Virhe ladattaessa kieliä')
+                }
+            });
+
+            function addSeason(season) {
+                $mdSelSeason.append('<option>' + season.Season + '</option>');
+            }
+            function addNewSeason(season) {
+                $mdNewSelSeason.append('<option>' + season.Season + '</option>');
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/api/Seasons',
+                dataType: 'json',
+                success: function (seasons) {
+                    $.each(seasons, function (i, season) {
+                        addSeason(season);
+                        addNewSeason(season);
+                    });
+                },
+                error: function () {
+                    alert: ('Virhe ladattaessa kausia')
+                }
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: 'api/Selections',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (i, val) {
+
+                        //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
+                        selection += '<tr >' +
+                            "<td><a href='#'><span class='glyphicon glyphicon-pencil'></span></a></td>" +
+                            "<td>" + val.BookID + "</td>" +
+                            "<td>" + val.ISBN + "</td>" +
+                            "<td>" + val.Author + "</td>" +
+                            "<td>" + val.BookName + "</td>" +
+                            "<td>" + val.Publisher + "</td>" +
+                            "<td>" + val.Price + "</td>" +
+                            "<td>" + val.Language + "</td>" +
+                            "<td>" + val.Season + "</td>" +
+                            "<td><a href='#'><span class='glyphicon glyphicon-trash'></span></a></td>" +
+                            '</tr>';
+
+                    });
+                    //näytetään taulukko sivulla
+                    $('#selection_table').append(selection);
+
+                    $(".glyphicon-pencil").on("click", function () {
+
+                        // etsitään lomakkeen tiedot klikatulta riviltä
+                        var BookID = $(this).parent().parent().next().text();
+              
+                        $.ajax({
+                            type: 'GET',
+                            url: 'api/Selections/' + BookID,
+                            dataType: 'json',
+                            global: false,
+                            success: function (data1) {
+                                $("#mdSelID").val(data1.BookID);
+                                $("#mdSelIsbn").val(data1.ISBN);
+                                $("#mdSelAuthor").val(data1.Author);
+                                $("#mdSelBookname").val(data1.BookName);
+                                $("#mdSelPublisher").val(data1.Publisher);
+                                $("#mdSelPrice").val(data1.Price);
+                                $("#mdSelSeason").val(data1.Season);
+                                $("#mdSelLanguage").val(data1.Language);
+                                $("#mdSelTitle").text("Muokkaa tuotetta");
+                                $("#editSelModalDialog").modal('show');
+
+                            },
+                            error: function () {
+                                alert('Tietoja ei löytynyt');
+                            },
+                        });
+                    });
+                    $(function () {
+                        $("#mdEditSelSaveButton").click(function () {
+                            var details = {
+                                BookID: $("#mdSelID").val(),
+                                ISBN: $("#mdSelIsbn").val(),
+                                Author: $("#mdSelAuthor").val(),
+                                BookName: $("#mdSelBookname").val(),
+                                Publisher: $("#mdSelPublisher").val(),
+                                Price: $("#mdSelPrice").val(),
+                                Language: $("#mdSelLanguage").val(),
+                                Season: $("#mdSelSeason").val()
+                            };
+
+                            $.ajax({
+                                type: 'put',
+                                url: 'api/selections/' + details.BookID,
+                                data: JSON.stringify(details),
+                                contentType: 'application/json',
+                                success: function () {
+                                    alert('Muokkaus onnistui');
+                                    location.reload();
+                                },
+                                error: function () {
+                                    alert('Virhe muokatessa tuotetta');
+                                },
+                            });
+                        });
+                    });
+                    // tietojen poisto
+                    $(".glyphicon-trash").click(function () {
+                        // etsitään lomakkeen tiedot klikatulta riviltä
+                        var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().prev().prev().text();
+                        var ISBN = $(this).parent().parent().prev().prev().prev().prev().prev().prev().prev().text();
+                        var ok = confirm("Haluatko varmasti poistaa tuotteen " + ISBN + "? Kaikki tiedot poistetaan tietokannasta.");
+                        //Poistetaan lomake tietokannasta
+                        if (ok == true) {
+                            $.ajax({
+                                type: 'DELETE',
+                                url: '/api/selections/' + BookID,
+                                contentType: 'application/json',
+                                global: false,
+                                success: function () {
+                                    alert('Tuote poistettu');
+                                    location.reload(); //sivun uudelleen lataus
+                                },
+                                error: function () {
+                                    alert('Poisto epäonnistui')
+                                }
+                            });
+                        }
+                    });
+
+                },
+                error: function () {
+                    alert('Lataus ei onnistunut, yritä uudelleen')
+                }
+            });
+            //$(function () {
+            $("#newSelection").on("click", function () {
+                    console.log('Nappia painettu')
+                    // tyhjennetään ikkunan tiedot
+                   // $("#mdnewSelID").val("(Uusi)");
+                    $("#mdnewSelIsbn").val("");
+                    $("#mdnewSelAuthor").val("");
+                    $("#mdnewSelBookname").val("");
+                    $("#mdnewSelPublisher").val("");
+                    $("#mdnewSelPrice").val("");
+                    $("#mdNewSelLanguage").val("");
+                    $("#mdNewSelSeason").val("");
+
+                    // näytetään ikkuna
+                    $("#mdNewSelTitle").text("Lisää uusi tuote");
+                    $("#newSelModalDialog").modal("show");
+                });
+
+                $("#mdNewSelSaveButton").click(function () {
+                    // luetaan käyttäjän syöttämät kentät
+                    var details = {
+                        ISBN: $("#mdnewSelIsbn").val(),
+                        Author: $("#mdnewSelAuthor").val(),
+                        BookName: $("#mdnewSelBookname").val(),
+                        Publisher: $("#mdnewSelPublisher").val(),
+                        Price: $("#mdnewSelPrice").val(),
+                        Language: $("#mdNewSelLanguage").val(),
+                        Season: $("#mdNewSelSeason").val()
+                    };
+
+                    $.ajax({
+                        method: 'post',
+                        url: 'api/selections',
+                        data: details,
+                        success: function () {
+                            //alert('Uusi tuote lisätty');
+                            $("#newSelModalDialog").modal("hide");
+                            location.reload();
+                        },
+                        error: function () {
+                            alert('Virhe uuden tuotteen lisäyksessä.');
+                        }
+                    });
+                //});
+            });
+            $("#search").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#selection_table tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+
+
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>Näytevarastokauppa</h1>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="Index.html" class="navbar-brand" id="username">Kirjakauppa Kivijalka Oy</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="Index.html">Valikoima</a></li>
+                    <li><a href="IndexSVE.html">Svenska val</a></li>
+                    <li><a href="#">Tilaushistoria</a></li>
+                    <li><a href="#">Kirjaudu ulos</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="save" class="col-xs-2 control-label"></label>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-3 form-group">
+                            <button class="btn button1 btn-lg" id="newSelection">Lisää uusi tuote</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="container">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Muokkaa</th>
+                                <th>ID</th>
+                                <th>ISBN</th>
+                                <th>Tekijä</th>
+                                <th>Kirjan nimi</th>
+                                <th>Kustantaja</th>
+                                <th>Hinta</th>
+                                <th>Kieli</th>
+                                <th>Kausi</th>
+                                <th>Poista</th>
+                            </tr>
+                        </thead>
+                        <tbody id="selection_table"></tbody>
+                    </table>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="form-group">
+                    <div class="container">
+                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="editSelModalDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span id="mdEditSelTitle">Muokkaa tuotetta</span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">BookID</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelID" type="number" readonly></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">ISBN</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelIsbn" type="number"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Tekijä</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelAuthor" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kirjan nimi</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelBookname" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kustantaja</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelPublisher" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Hinta</div>
+                        <div class="col-md-6"><input class="form-control" id="mdSelPrice" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kieli</div>
+                        <div class="col-md-6">
+                            <select class="dropdown" id="mdSelLanguage" type="text">
+                                <option>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kausi</div>
+                        <div class="col-md-6">
+                            <select class="dropdown" id="mdSelSeason" type="text">
+                                <option>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Sulje</button>
+                    <button type="button" class="btn btn-primary" id="mdEditSelSaveButton">Tallenna</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="newSelModalDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span id="mdNewSelTitle">Uusi tuote</span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">BookID</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelID" type="number" readonly></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">ISBN</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelIsbn" type="number"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Tekijä</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelAuthor" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kirjan nimi</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelBookname" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kustantaja</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelPublisher" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Hinta</div>
+                        <div class="col-md-6"><input class="form-control" id="mdnewSelPrice" type="text"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kieli</div>
+                        <div class="col-md-6">
+                            <div class="dropdown">
+                                <select data-toggle="dropdown" type="text" id="mdNewSelLanguage">
+                                    <option>
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Kausi</div>
+                        <div class="col-md-6">
+                            <div class="dropdown">
+                                <select data-toggle="dropdown" type="text" id="mdNewSelSeason"> 
+                                    <option>
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Sulje</button>
+                        <button type="button" class="btn btn-primary" id="mdNewSelSaveButton">Tallenna</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+        <p>@Näytevarasto 2019</p>
+        <form class="form-inline">
+        </form>
+    </footer>
+</body>
+</html>
