@@ -18,7 +18,7 @@
 
         //sivun alustus
         $(document).ready(function () {
-             var selection = $('#selection');
+            var selection = $('#selection');
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
                 location.href = "login.html"
@@ -31,13 +31,10 @@
                     location.href = "login.html";
                 }
             });
-            $('#companyname').text(JSON.parse(localStorage.getItem('userName')),);
+            $('#companyname').text(JSON.parse(localStorage.getItem('userName')));
 
 
             //haetaan ostoskorin tiedot CompanyID:n perusteella
-
-            console.log(localStorage.getItem('userName'));
-
             $.ajax({
                 type: 'GET',
                 url: 'api/Carts',
@@ -47,7 +44,7 @@
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.CompanyID == JSON.parse(localStorage.getItem('userName'))) {
+                        if (val.CompanyID == JSON.parse(localStorage.getItem('userName')) && val.IsInCart == true) {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
@@ -56,14 +53,26 @@
                                 "<td>" + val.Author + "</td>" +
                                 "<td>" + val.BookName + "</td>" +
                                 "<td>" + val.Publisher + "</td>" +
-                                "<td>" + val.Price + "€ </td>" +
+                                "<td id='price'>" + val.Price + "€ </td>" +
                                 "<td><a href='#'><span class='glyphicon glyphicon-trash'></span></a></td>" +
                                 '</tr>';
                         }
-                       
+
                     });
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
+
+                    //lasketaan ostoskorissa olevien tuotteiden määrä
+                    var rowCount = $('#selection_table tr').length;
+                    $('.cartsum').append(rowCount);
+
+                    //lasketaan ostoskorissa olevien hinta yhteensä
+                    var sum = 0;
+                    $('td[id^="price"]').each(function (k, v) {
+                        sum += parseInt($(this).text());
+                        if (k === $('td[id^="price"]').length - 1) $('#sum').text(sum);
+                    });
+                    $('#pricesum').text(sum);
 
                     //tuotteen poisto ostoskorista
                     $(".glyphicon-trash").on("click", function () {
@@ -88,14 +97,7 @@
                         }
                     });
                 },
-               
-            });
-        });
-        //etsi -toiminto
-        $("#search").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#selection_table tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
             });
         });
 
@@ -127,7 +129,8 @@
                     <li><a href="IndexSVE.html">Svenska val</a></li>
                     <li><a href="#">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"></span></a></li>
+
                 </ul>
             </div>
         </div>
@@ -137,7 +140,7 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h2>Ostoskori</h2>
+                    <h3>Ostoskorissa <span class="cartsum"></span> tuotetta</h3>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -152,6 +155,21 @@
                         </thead>
                         <tbody id="selection_table"></tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4" style="font-size:22px">Hinta yhteensä <span id="pricesum"></span> €</div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2" style="font-size:14px"><a href="Index.html">Palaa takaisin valikoimaan</a></div>
+                        <div class="col-md-2">
+                            <button type="submit" id="send" class="btn button1">Tallenna tilaus</button>
+                        </div>
+                    </div>
                 </div>
                 <br>
                 <br>
