@@ -72,7 +72,7 @@
                         sum += parseInt($(this).text());
                         if (k === $('td[id^="price"]').length - 1) $('#sum').text(sum);
                     });
-                    $('#pricesum').text(sum);
+                    $('.pricesum').text(sum);
 
                     //tuotteen poisto ostoskorista
                     $(".glyphicon-trash").on("click", function () {
@@ -96,9 +96,69 @@
                             });
                         }
                     });
+
+                    //kuluvan päivän funktio
+                    function getDate() {
+                        var d = new Date();
+                        var month = d.getMonth() + 1;
+                        var day = d.getDate();
+                        var year = d.getFullYear();
+                        return date = year + '/' +
+                            (('' + month).length < 2 ? '0' : '') + month + '/' +
+                            (('' + day).length < 2 ? '0' : '') + day;
+                    }
+                    $('#send').click(function (e) {
+                        e.preventDefault();
+
+                        $.ajax({
+                            type: 'GET',
+                            url: 'api/carts/',
+                            dataType: 'json',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            },
+                            success: function (data) {
+                                $.each(data, function (i, sel) {
+                                    if (sel.CompanyID == JSON.parse(localStorage.getItem('userName')) && sel.IsInCart == true) {
+                                        var cart = {
+                                            OrderID: sel.OrderID,
+                                            CompanyID: sel.CompanyID,
+                                            OrderDate: sel.OrderDate,
+                                            ISBN: sel.ISBN,
+                                            BookName: sel.BookName,
+                                            Author: sel.Author,
+                                            Publisher: sel.Publisher,
+                                            Price: sel.Price,
+                                            Season: sel.Season,
+                                            IsInCart: false,
+
+                                        };
+                                        $.ajax({
+                                        method: 'put',
+                                        url: 'api/carts/' + cart.OrderID,
+                                        data: JSON.stringify(cart),
+                                        contentType: 'application/json',
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        error: function () {
+                                            alert('Virhe');
+                                        }
+                                    });
+                                    }
+                                });
+                               alert('Tilaus lähetetty');
+                            }
+                          
+                        });
+                        //  localStorage.removeItem('key'); // Tyhjennä LocalStorage
+                    });
                 },
 
+
             });
+
+
         });
 
     </script>
@@ -127,9 +187,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="Index.html">Valikoima</a></li>
                     <li><a href="IndexSVE.html">Svenska val</a></li>
-                    <li><a href="#">Tilaushistoria</a></li>
+                    <li><a href="History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"></span></a></li>
+                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
 
                 </ul>
             </div>
@@ -158,7 +218,7 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4"></div>
-                        <div class="col-md-4" style="font-size:22px">Hinta yhteensä <span id="pricesum"></span> €</div>
+                        <div class="col-md-4" style="font-size:22px">Hinta yhteensä <span class="pricesum"></span> €</div>
                     </div>
                     <br />
                     <br />

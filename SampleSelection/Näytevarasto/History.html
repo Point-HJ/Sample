@@ -1,15 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Näytevarasto</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
+    <title>Tilaushistoria</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
     <script>
-
         $(document).ajaxStart(function () {
             $("#loading").show();
         }).ajaxStop(function () {
@@ -19,7 +17,6 @@
         //sivun alustus
         $(document).ready(function () {
             var selection = $('#selection');
-            var $RowCount = $('#pricesum');
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
                 location.href = "login.html"
@@ -28,112 +25,55 @@
             $('#logout').click(function () {
                 var ok = confirm('Haluatko varmasti kirjautua ulos?');
                 if (ok == true) {
-                    localStorage.removeItem('accessToken');
+                    localStorage.clear;
                     location.href = "login.html";
                 }
             });
-            //käyttäjätunnus localStoragesta
-            $('#username').text(JSON.parse(localStorage.getItem('userName')));
+            $('#companyname').text(JSON.parse(localStorage.getItem('userName')));
 
-            //haetaan ruotsinkielinen valikoima tietokannasta
+
+            //haetaan ostoskorin tiedot CompanyID:n perusteella
             $.ajax({
                 type: 'GET',
-                url: 'api/Selections',
+                url: 'api/Carts',
                 dataType: 'json',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Ruotsi') {
+                        if (val.CompanyID == JSON.parse(localStorage.getItem('userName')) && val.IsInCart == false) {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
-                                "<td hidden>" + val.BookID + "</td>" +
+                                "<td hidden>" + val.OrderID + "</td>" +
+                                "<td>" + val.Orderdate + "</td>" +
                                 "<td>" + val.ISBN + "</td>" +
                                 "<td>" + val.Author + "</td>" +
                                 "<td>" + val.BookName + "</td>" +
                                 "<td>" + val.Publisher + "</td>" +
-                                "<td>" + val.Price + "€ </td>" +
-                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart'></span></a></td>" +
+                                "<td id='price'>" + val.Price + "€ </td>" +
+
                                 '</tr>';
                         }
+
                     });
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
-                    function getdate() {
-                        var d = new Date();
-                        var month = d.getMonth() + 1;
-                        var day = d.getDate();
-                        var year = d.getFullYear();
-                        return date = year + '/' +
-                            (('' + month).length < 2 ? '0' : '') + month + '/' +
-                            (('' + day).length < 2 ? '0' : '') + day;
-                    }
-
-                    $(".glyphicon-shopping-cart").on("click", function () {
-                        $(this).css("color", "#29d646");
-                        var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
-
-                        $.ajax({
-                            type: 'GET',
-                            url: 'api/selections/' + BookID,
-                            dataType: 'json',
-                            headers: {
-                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                            },
-                            success: function (sel) {
-
-                                var toCart = {
-                                    CompanyID: JSON.parse(localStorage.getItem('userName')),
-                                    OrderDate: getdate(),
-                                    ISBN: sel.ISBN,
-                                    BookName: sel.BookName,
-                                    Author: sel.Author,
-                                    Publisher: sel.Publisher,
-                                    Price: sel.Price,
-                                    Season: sel.Season,
-                                    IsInCart: true,
-                                };
-                                $.ajax({
-                                    type: 'post',
-                                    url: 'api/Carts',
-                                    data: toCart,
-                                    success: function () {
-                                        console.log('Lisätty koriin ' + BookID);
-                                    },
-                                    error: function () {
-                                        alert('Virhe!');
-                                    }
-                                });
-                            }
-                        });
-                    });
-                },
-                error: function (jqXHR) {
-                    if (jqXHR.status == "401") {
-                        alert('Kirjaudu uudelleen sisään');
-                        location.href = "login.html";
-                    }
-                    else {
-                        alert('Lataus ei onnistunut, yritä uudelleen')
-                    }
                 }
             });
-
             $("#search").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
                 $("#selection_table tr").filter(function () {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-
-
         });
 
 
     </script>
+
 
 </head>
 <body>
@@ -152,7 +92,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" id="username"> </a>
+                <a class="navbar-brand" id="companyname"></a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
@@ -161,7 +101,8 @@
                     <li><a href="IndexSVE.html">Svenska val</a></li>
                     <li><a href="History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span><span id="pricesum"></span></a></li>
+                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
+
                 </ul>
             </div>
         </div>
@@ -171,17 +112,17 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h2>Ruotsinkielinen valikoima</h2>
+                    <h3>Tilaushistoria</h3>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th hidden>BookID</th>
+                                <th hidden>OrderID</th>
+                                <th>Tilauspvm</th>
                                 <th>ISBN</th>
                                 <th>Tekijä</th>
                                 <th>Kirjan nimi</th>
                                 <th>Kustantaja</th>
                                 <th>Hinta</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody id="selection_table"></tbody>
@@ -205,6 +146,7 @@
         <form class="form-inline">
         </form>
     </footer>
+
 
 </body>
 </html>

@@ -316,6 +316,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="History.html" />
     <Content Include="Index.html" />
     <Content Include="IndexSVE.html" />
     <Content Include="Login.html" />

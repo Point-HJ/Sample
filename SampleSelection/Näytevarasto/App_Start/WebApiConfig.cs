@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace Näytevarasto
@@ -25,6 +26,13 @@ namespace Näytevarasto
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
+               new IsoDateTimeConverter() { DateTimeFormat = "dd-MM-yyyy" });
+
+            //config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
+            //   new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
+
 
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;

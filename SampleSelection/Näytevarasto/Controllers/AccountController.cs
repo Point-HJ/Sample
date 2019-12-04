@@ -20,7 +20,7 @@ using Näytevarasto.Results;
 namespace Näytevarasto.Controllers
 {
     // [Authorize(Roles = "Admin")]
-    // [Authorize]
+    [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {

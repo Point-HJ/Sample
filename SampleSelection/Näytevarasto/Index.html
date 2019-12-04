@@ -27,11 +27,11 @@
             $('#logout').click(function () {
                 var ok = confirm('Haluatko varmasti kirjautua ulos?');
                 if (ok == true) {
-                    localStorage.clear;
+                    localStorage.removeItem('accessToken');
                     location.href = "login.html";
                 }
             });
-            $('#companyname').text(JSON.parse(localStorage.getItem('userName')),);
+            $('#username').text(JSON.parse(localStorage.getItem('userName')),);
 
 
            //haetaan suomenkielinen valikoima tietokannasta
@@ -152,14 +152,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" id="companyname"></a>
+                <a class="navbar-brand" id="username"></a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="Index.html">Valikoima</a></li>
                     <li><a href="IndexSVE.html">Svenska val</a></li>
-                    <li><a href="#">Tilaushistoria</a></li>
+                    <li><a href="History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
                     <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
                 </ul>
