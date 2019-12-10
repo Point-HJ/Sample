@@ -5,7 +5,7 @@
     <title>Tilaushistoria</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link href="Content/MyStyle.css" rel="stylesheet" />
+    <link href="/Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
         $(document).ajaxStart(function () {
@@ -35,7 +35,7 @@
             //haetaan ostoskorin tiedot CompanyID:n perusteella
             $.ajax({
                 type: 'GET',
-                url: 'api/Carts',
+                url: '/api/Carts',
                 dataType: 'json',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
@@ -97,11 +97,11 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="Index.html">Valikoima</a></li>
-                    <li><a href="IndexSVE.html">Svenska val</a></li>
-                    <li><a href="History.html">Tilaushistoria</a></li>
+                    <li><a href="/Index.html">Valikoima</a></li>
+                    <li><a href="/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
+                    <li><a href="/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> <span class="pricesum"> </span></a></li>
 
                 </ul>
             </div>
@@ -142,7 +142,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p><a href="Selection.html?#">@</a>Näytevarasto 2019</p>
+        <p><a href="Management/Selection.html">@</a>Näytevarasto 2019</p>
         <form class="form-inline">
         </form>
     </footer>

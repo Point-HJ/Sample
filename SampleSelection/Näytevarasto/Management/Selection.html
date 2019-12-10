@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <link href="Content/MyStyle.css" rel="stylesheet" />
-
+    <link href="/Content/MyStyle.css" rel="stylesheet" />
+    
     <script>
-
+       
         $(document).ajaxStart(function () {
             $("#loading").show();
         }).ajaxStop(function () {
@@ -19,9 +19,18 @@
 
         //haetaan tiedot tietokannasta
         $(document).ready(function () {
-             if (localStorage.getItem('accessToken') == null) {
-                location.href = "login.html"
+            if (localStorage.getItem('accessToken') == null) {
+                location.href = "/login.html"
             }
+
+            //uloskirjautuminen
+            $('#logout').click(function () {
+                var ok = confirm('Haluatko varmasti kirjautua ulos?');
+                if (ok == true) {
+                    localStorage.removeItem('accessToken');
+                    location.href = "/login.html";
+                }
+            });
 
             var selection = $('#selection');
             var $mdSelLanguage = $('#mdSelLanguage');
@@ -73,7 +82,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'api/Selections',
+                url: '/api/Selections',
                 dataType: 'json',
                 success: function (data) {
                     $.each(data, function (i, val) {
@@ -185,7 +194,7 @@
             $("#newSelection").on("click", function () {
                 console.log('Nappia painettu')
                 // tyhjennetään ikkunan tiedot
-                
+
                 $("#mdnewSelIsbn").val("");
                 $("#mdnewSelAuthor").val("");
                 $("#mdnewSelBookname").val("");
@@ -262,9 +271,8 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="Index.html">Valikoima</a></li>
-                    <li><a href="IndexSVE.html">Svenska val</a></li>
-                    <li><a href="#">Kirjaudu ulos</a></li>
+                    <li><a href="/Index.html">Valikoima</a></li>
+                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
 
                 </ul>
             </div>

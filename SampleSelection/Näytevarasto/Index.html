@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link href="Content/MyStyle.css" rel="stylesheet" />
+
+    <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <script>
@@ -18,6 +19,7 @@
 
         //sivun alustus
         $(document).ready(function () {
+            console.log(localStorage);
             var selection = $('#selection');
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
@@ -31,13 +33,34 @@
                     location.href = "login.html";
                 }
             });
-            $('#username').text(JSON.parse(localStorage.getItem('userName')),);
+            $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
-
-           //haetaan suomenkielinen valikoima tietokannasta
+            //ostoskorin tiedot
             $.ajax({
                 type: 'GET',
-                url: 'api/Selections',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+                success: function (data) {
+                    console.log(data.length);
+                    let counter = 0;
+                    $.each(data, function (index, val) {
+                        let uname = JSON.parse(localStorage.getItem('userName'));
+                        if (val.CompanyID == uname && val.IsInCart == true) {
+                            counter = counter + 1;
+                        }
+                    });
+                    $('#cartsum').append(counter);
+                }
+            })
+
+
+            //haetaan suomenkielinen valikoima tietokannasta
+            $.ajax({
+                type: 'GET',
+                url: '/api/Selections',
                 dataType: 'json',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
@@ -79,7 +102,7 @@
 
                         $.ajax({
                             type: 'GET',
-                            url: 'api/selections/' + BookID,
+                            url: '/api/selections/' + BookID,
                             dataType: 'json',
                             headers: {
                                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
@@ -87,7 +110,7 @@
                             success: function (sel) {
                                 var toCart = {
                                     CompanyID: JSON.parse(localStorage.getItem('userName')),
-                                    OrderDate: getdate(),
+                                    Orderdate: getdate(),
                                     ISBN: sel.ISBN,
                                     BookName: sel.BookName,
                                     Author: sel.Author,
@@ -98,17 +121,20 @@
                                 };
                                 $.ajax({
                                     type: 'post',
-                                    url: 'api/Carts',
+                                    url: '/api/Carts',
                                     data: toCart,
                                     success: function () {
                                         console.log('Lisätty koriin ' + BookID);
+                                           location.reload();
                                     },
                                     error: function () {
                                         alert('Virhe!');
                                     }
                                 });
+                                
                             }
                         });
+                     
                     });
                 },
                 error: function (jqXHR) {
@@ -157,11 +183,11 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="Index.html">Valikoima</a></li>
-                    <li><a href="IndexSVE.html">Svenska val</a></li>
-                    <li><a href="History.html">Tilaushistoria</a></li>
+                    <li><a href="/Index.html">Valikoima</a></li>
+                    <li><a href="/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+                    <li><a href="/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
                 </ul>
             </div>
         </div>
@@ -201,7 +227,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p><a href="Selection.html?#">@</a>Näytevarasto 2019</p>
+        <p><a href="Management/Selection.html">@</a>Näytevarasto 2019</p>
         <form class="form-inline">
         </form>
     </footer>
