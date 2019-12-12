@@ -1,4 +1,57 @@
 ﻿
+
+
+
+h1 {
+    text-align: center;
+    padding: 30px;
+}
+
+a {
+    color: white;
+}
+
+    a:hover {
+        color: white;
+    }
+
+    a:focus {
+        color: white;
+    }
+
+.control-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.header {
+    font-size: 18px;
+    text-decoration: underline;
+}
+
+body {
+    background-color: rgb(18, 89, 117);
+    color: white;
+}
+
+.button1 {
+    background-color: #002f40;
+    color: white;
+    border: 1px solid white;
+}
+
+    .button1:hover {
+        background-color: #002f40;
+        color: white;
+    }
+
+    .button1:focus {
+        background-color: #002f40;
+        color: white;
+    }
+.glyphicon-shopping-cart {
+    color: white;
+}
 /* Remove the navbar's default rounded borders and increase the bottom margin */
 .navbar {
     margin-bottom: 50px;
@@ -17,9 +70,5 @@ footer {
 }
 
 
-
-
-body {
-}
 
 

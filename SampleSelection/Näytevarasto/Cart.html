@@ -8,7 +8,49 @@
     <link href="/Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+        .glyphicon-shopping-cart {
+            color: white;
+        }
 
+        body {
+            background-color: rgb(18, 89, 117);
+            color: white;
+        }
+
+        footer {
+            background-color: #002f40;
+            color: white;
+        }
+         .jumbotron {
+    margin-bottom: 0;
+    background-color: rgb(18, 89, 117);
+            color: white;
+}
+         .button1 {
+    background-color: #002f40;
+    color: white;
+    border: 1px solid white;
+}
+         .button1:hover {
+        background-color: #002f40;
+        color: wheat;
+    }
+
+    .button1:focus {
+        background-color: #002f40;
+        color: white;
+    }
+    a{
+        color:white;
+    }
+    a:hover{
+        color:wheat;
+    }
+      #search{
+            color:black;
+        }
+    </style>
     <script>
         //Lataa tietoja -teksti
         $(document).ajaxStart(function () {
@@ -79,7 +121,7 @@
                     $(".glyphicon-trash").on("click", function () {
                         var OrderID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         var ISBN = $(this).parent().parent().prev().prev().prev().prev().prev().text();
-                        var ok = confirm("Haluatko poistaa tuotteen " + OrderID + " ostoskorista? ");
+                        var ok = confirm("Haluatko poistaa tuotteen " + ISBN + " ostoskorista? ");
 
                         if (ok == true) {
                             $.ajax({
@@ -115,11 +157,10 @@
                             type: 'GET',
                             url: '/api/carts/',
                             dataType: 'json',
-                            headers: {
-                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                            },
                             success: function (data) {
+                                var present = false;
                                 $.each(data, function (i, sel) {
+
                                     if (sel.CompanyID == JSON.parse(localStorage.getItem('userName')) && sel.IsInCart == true) {
                                         var cart = {
                                             OrderID: sel.OrderID,
@@ -140,6 +181,7 @@
                                             data: JSON.stringify(cart),
                                             contentType: 'application/json',
                                             success: function () {
+                                                console.log('Tilaus tallennettu')
                                                 location.reload();
                                             },
                                             error: function () {
@@ -149,6 +191,7 @@
                                     }
                                 });
                                 alert('Tilaus lähetetty');
+
                             }
 
                         });
@@ -246,7 +289,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p><a href="Management/Selection.html">@</a>Näytevarasto 2019</p>
+        <p>@Näytevarasto 2019</p>
         <form class="form-inline">
         </form>
     </footer>

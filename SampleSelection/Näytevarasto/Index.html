@@ -5,10 +5,31 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-    <link href="../Content/MyStyle.css" rel="stylesheet" />
+    <link href="Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        .glyphicon-shopping-cart {
+            color: white;
+        }
 
+        body {
+            background-color: rgb(18, 89, 117);
+            color: white;
+        }
+
+        footer {
+            background-color: #002f40;
+            color: white;
+        }
+        .jumbotron {
+    margin-bottom: 0;
+    background-color: rgb(18, 89, 117);
+            color: white;
+}
+       #search{
+            color:black;
+        }
+    </style>
     <script>
         //Lataa tietoja -teksti
         $(document).ajaxStart(function () {
@@ -33,6 +54,7 @@
                     location.href = "login.html";
                 }
             });
+
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
             //ostoskorin tiedot
@@ -56,7 +78,6 @@
                 }
             })
 
-
             //haetaan suomenkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
@@ -67,7 +88,7 @@
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Suomi') {
+                        if (val.Language == 'Suomi' && val.Season == '1/2020') {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
@@ -95,11 +116,10 @@
                             (('' + day).length < 2 ? '0' : '') + day;
                     }
 
-                    //klikatessa ostoskoria, korin väri vaihtuu, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin
+                    //klikatessa ostoskoria, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin, jos käyttäjä ei ole vielä tehnyt tilausta
                     $(".glyphicon-shopping-cart").on("click", function () {
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
-
                         $.ajax({
                             type: 'GET',
                             url: '/api/selections/' + BookID,
@@ -108,33 +128,63 @@
                                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             },
                             success: function (sel) {
-                                var toCart = {
-                                    CompanyID: JSON.parse(localStorage.getItem('userName')),
-                                    Orderdate: getdate(),
-                                    ISBN: sel.ISBN,
-                                    BookName: sel.BookName,
-                                    Author: sel.Author,
-                                    Publisher: sel.Publisher,
-                                    Price: sel.Price,
-                                    Season: sel.Season,
-                                    IsInCart: true,
-                                };
+                                //check if user has order already
                                 $.ajax({
-                                    type: 'post',
-                                    url: '/api/Carts',
-                                    data: toCart,
-                                    success: function () {
-                                        console.log('Lisätty koriin ' + BookID);
-                                           location.reload();
-                                    },
-                                    error: function () {
-                                        alert('Virhe!');
+                                    type: 'GET',
+                                    url: '/api/carts',
+                                    dataType: 'json',
+                                    success: function (cart) {
+                                        //var datefrom = $.datepicker.parseDate('12-01-2019');
+                                        //var dateto = $.datepicker.parseDate('12-06-2019');
+                                        //var cartdate =$.datepicker.parseDate(sel.Orderdate);
+                                        var orderdone = false;
+                                        $.each(cart, function (i, ord) {
+
+                                            if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false /*&& (cartdate <= dateto && cartdate >= datefrom)*/) {
+                                                console.log('Tilaus on jo tehty');
+                                                orderdone = true;
+                                                $(".glyphicon-shopping-cart").css("color", "#c90c1c");
+                                            }
+                                        })
+                                        //check if Book is in cart already
+                                        if (orderdone == false) {
+                                            var present = false;
+                                            $.each(cart, function (i, carts) {
+                                                if (carts.CompanyID == JSON.parse(localStorage.getItem('userName')) && carts.ISBN == sel.ISBN) {
+                                                    alert('Tuote on jo ostoskorissa');
+                                                    present = true;
+                                                }
+                                            })
+                                            if (present == false) {
+                                                var toCart = {
+                                                    CompanyID: JSON.parse(localStorage.getItem('userName')),
+                                                    Orderdate: getdate(),
+                                                    ISBN: sel.ISBN,
+                                                    BookName: sel.BookName,
+                                                    Author: sel.Author,
+                                                    Publisher: sel.Publisher,
+                                                    Price: sel.Price,
+                                                    Season: sel.Season,
+                                                    IsInCart: true,
+                                                };
+                                                $.ajax({
+                                                    type: 'post',
+                                                    url: '/api/Carts',
+                                                    data: toCart,
+                                                    success: function () {
+                                                        console.log('Added to cart ' + BookID);
+                                                        location.reload();
+                                                    },
+                                                    error: function () {
+                                                        alert('Virhe!');
+                                                    }
+                                                });
+                                            }
+                                        }
                                     }
                                 });
-                                
                             }
                         });
-                     
                     });
                 },
                 error: function (jqXHR) {
@@ -227,7 +277,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p><a href="Management/Selection.html">@</a>Näytevarasto 2019</p>
+        <p>@Näytevarasto 2019</p>
         <form class="form-inline">
         </form>
     </footer>
