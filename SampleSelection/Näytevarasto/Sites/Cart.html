@@ -1,11 +1,11 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Näytevarasto</title>
+    <title>STGchannel.fi</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../Content/MyStyle.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link href="/Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
@@ -22,33 +22,39 @@
             background-color: #002f40;
             color: white;
         }
-         .jumbotron {
-    margin-bottom: 0;
-    background-color: rgb(18, 89, 117);
-            color: white;
-}
-         .button1 {
-    background-color: #002f40;
-    color: white;
-    border: 1px solid white;
-}
-         .button1:hover {
-        background-color: #002f40;
-        color: wheat;
-    }
 
-    .button1:focus {
-        background-color: #002f40;
-        color: white;
-    }
-    a{
-        color:white;
-    }
-    a:hover{
-        color:wheat;
-    }
-      #search{
-            color:black;
+        .jumbotron {
+            margin-bottom: 0;
+            background-color: rgb(18, 89, 117);
+            color: white;
+        }
+
+        .button1 {
+            background-color: #002f40;
+            color: white;
+            border: 1px solid white;
+        }
+
+            .button1:hover {
+                background-color: #002f40;
+                color: wheat;
+            }
+
+            .button1:focus {
+                background-color: #002f40;
+                color: white;
+            }
+
+        a {
+            color: white;
+        }
+
+            a:hover {
+                color: wheat;
+            }
+
+        #search {
+            color: black;
         }
     </style>
     <script>
@@ -65,14 +71,14 @@
 
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
-                location.href = "login.html"
+                location.href = "/Sites/login.html"
             }
             //uloskirjautuminen
             $('#logout').click(function () {
                 var ok = confirm('Haluatko varmasti kirjautua ulos?');
                 if (ok == true) {
                     localStorage.clear;
-                    location.href = "login.html";
+                    location.href = "/Sites/login.html";
                 }
             });
             $('#companyname').text(JSON.parse(localStorage.getItem('userName')));
@@ -173,6 +179,7 @@
                                             Price: sel.Price,
                                             Season: sel.Season,
                                             IsInCart: false,
+                                            SentToJvs: false,
 
                                         };
                                         $.ajax({
@@ -183,6 +190,7 @@
                                             success: function () {
                                                 console.log('Tilaus tallennettu')
                                                 location.reload();
+                                                localStorage.removeItem('cart');
                                             },
                                             error: function () {
                                                 alert('Virhe');
@@ -191,18 +199,11 @@
                                     }
                                 });
                                 alert('Tilaus lähetetty');
-
                             }
-
                         });
-                        //  localStorage.removeItem('key'); // Tyhjennä LocalStorage
                     });
                 },
-
-
             });
-
-
         });
 
     </script>
@@ -212,11 +213,11 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Näytevarastokauppa</h1>
+            <h1>STGchannel.fi</h1>
         </div>
     </div>
 
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse" style=" background-color: #002f40;">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -229,11 +230,11 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Index.html">Valikoima</a></li>
-                    <li><a href="/IndexSVE.html">Svenska val</a></li>
-                    <li><a href="/History.html">Tilaushistoria</a></li>
+                    <li><a href="/Sites/Index.html">Valikoima</a></li>
+                    <li><a href="/Sites/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
+                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
 
                 </ul>
             </div>
@@ -269,7 +270,7 @@
                     <br />
                     <div class="row">
                         <div class="col-md-8"></div>
-                        <div class="col-md-2" style="font-size:14px"><a href="Index.html">Palaa takaisin valikoimaan</a></div>
+                        <div class="col-md-2" style="font-size:14px"><a href="/Sites/Index.html">Palaa takaisin valikoimaan</a></div>
                         <div class="col-md-2">
                             <button type="submit" id="send" class="btn button1">Tallenna tilaus</button>
                         </div>
@@ -289,7 +290,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p>@Näytevarasto 2019</p>
+        <p>@STGchannel.fi</p>
         <form class="form-inline">
         </form>
     </footer>

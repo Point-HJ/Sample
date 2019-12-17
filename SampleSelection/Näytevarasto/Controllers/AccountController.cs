@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -21,7 +23,7 @@ using Näytevarasto.Results;
 namespace Näytevarasto.Controllers
 {
     [Authorize(Roles = "Admin")]
- 
+
     [RoutePrefix("api/Account")]
     public class AccountController : BaseApiController
     {
@@ -136,16 +138,16 @@ namespace Näytevarasto.Controllers
             return Ok();
         }
 
-        // POST api/Account/SetPassword
-        [Route("SetPassword")]
-        public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
+        // POST api/Account/ResetPassword
+        [Route("ResetPassword")]
+        public async Task<IHttpActionResult> ResetPassword(SetPasswordBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+            var user = await UserManager.FindByNameAsync(model.Email);
+            IdentityResult result = await UserManager.ResetPasswordAsync(user.Id, model.NewPassword, model.ConfirmPassword);
 
             if (!result.Succeeded)
             {
@@ -153,6 +155,29 @@ namespace Näytevarasto.Controllers
             }
 
             return Ok();
+        }
+
+        // POST api/Account/ForgotPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ForgotPassword")]
+        public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var user = await UserManager.FindByNameAsync(model.Email);
+
+                if (user == null)
+                {
+                    return Ok();
+                }
+                var code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var encodedCode = HttpUtility.UrlEncode(code);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", Request.RequestUri.GetLeftPart(UriPartial.Authority) + "/Sites/ForgotPassword?Code=" + encodedCode);
+                return Ok("Ok");
+
+            }
+            return BadRequest(ModelState);
         }
 
         // POST api/Account/AddExternalLogin
@@ -330,9 +355,10 @@ namespace Näytevarasto.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { 
+            var user = new ApplicationUser()
+            {
                 UserName = model.CompanyID,
-                Email = model.Email, 
+                Email = model.Email,
                 CompanyName = model.CompanyName,
             };
 
@@ -401,35 +427,6 @@ namespace Näytevarasto.Controllers
         {
             get { return Request.GetOwinContext().Authentication; }
         }
-
-        //private IHttpActionResult GetErrorResult(IdentityResult result)
-        //{
-        //    if (result == null)
-        //    {
-        //        return InternalServerError();
-        //    }
-
-        //    if (!result.Succeeded)
-        //    {
-        //        if (result.Errors != null)
-        //        {
-        //            foreach (string error in result.Errors)
-        //            {
-        //                ModelState.AddModelError("", error);
-        //            }
-        //        }
-
-        //        if (ModelState.IsValid)
-        //        {
-        //            // No ModelState errors are available to send, so just return an empty BadRequest.
-        //            return BadRequest();
-        //        }
-
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    return null;
-        //}
 
         private class ExternalLoginData
         {
@@ -542,6 +539,8 @@ namespace Näytevarasto.Controllers
 
             return Ok();
         }
+
+        
 
         #endregion
     }

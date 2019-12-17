@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Kirjaudu sisään</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!--<link href="Content/MyStyle.css" rel="stylesheet" />-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        .glyphicon-shopping-cart {
+            color: white;
+        }
+
+        body {
+            background-color: rgb(18, 89, 117);
+            color: white;
+        }
+
+        footer {
+            background-color: #002f40;
+            color: white;
+        }
+
+        .jumbotron {
+            margin-bottom: 0;
+            background-color: rgb(18, 89, 117);
+            color: white;
+        }
+
+        .button1 {
+            background-color: #002f40;
+            color: white;
+            border: 1px solid white;
+        }
+
+            .button1:hover {
+                background-color: #002f40;
+                color: wheat;
+            }
+
+            .button1:focus {
+                background-color: #002f40;
+                color: white;
+            }
+
+        a {
+            color: white;
+        }
+
+            a:hover {
+                color: wheat;
+            }
+
+        #search {
+            color: black;
+        }
+    </style>
+
+    <script>
+
+        $(document).ready(function () {
+            $('#btnLogin').click(function () {
+                $.ajax({
+                    url: '/token',
+                    method: 'post',
+                    contentType: 'application/json',
+                    data: {
+                        UserName: $('#txtUsername').val(),
+                        Password: $('#txtPassword').val(),
+                        grant_type: 'password'
+                    },
+                    success: function (response) {
+                        localStorage.setItem('accessToken', response.access_token);
+                        localStorage.setItem('userName', JSON.stringify(response.userName));
+                        location.href = "Index.html";
+
+                    },
+                    error: function (jqXHR) {
+                        $('#divErrorText').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+                });
+
+            });
+        });
+
+    </script>
+
+</head>
+<body style="padding-top:20px">
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>STGchannel.fi</h1>
+        </div>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="color: white; background-color:rgb(18, 89, 117)">
+                        <td colspan="2">
+                            Kirjaudu sisään
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <tr>
+                        <td style="color:black">Käyttäjätunnus</td>
+                        <td>
+                            <input style="color:black" type="text" id="txtUsername" placeholder="Käyttäjätunnus" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:black">Salasana</td>
+                        <td>
+                            <input style="color:black" type="password" id="txtPassword" placeholder="Salasana" />
+                        </td>
+
+                    <tr style="color: white; background-color:rgb(18, 89, 117)">
+                        <td colspan="2">
+                            <input id="btnLogin" class="btn button1" type="button" value="Kirjaudu sisään" />
+                        </td>
+                    </tr>
+                    <!--<tr style="color: white; background-color:rgb(18, 89, 117)">
+                        <td colspan="2">
+                            <a href="/Sites/ForgotPassword.html">Unohtuiko salasana?</a>
+                        </td>
+                    </tr>-->
+
+                </tbody>
+            </table>
+            <div id="divError" class="alert alert-danger collapse">
+                <a id="linkClose" href="#" class="close">&times;</a>
+                <div id="divErrorText"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

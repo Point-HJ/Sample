@@ -20,7 +20,7 @@ namespace Näytevarasto
 
         public static string PublicClientId { get; private set; }
 
-        
+
         public void ConfigureAuth(IAppBuilder app)
         {
             // Configure the db context and user manager to use a single instance per request
@@ -42,11 +42,13 @@ namespace Näytevarasto
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(2),
                 // In production mode set AllowInsecureHttp = false
-                AllowInsecureHttp = true
+                AllowInsecureHttp = true,
+               
             };
 
-            // Enable the application to use bearer tokens to authenticate users
-            app.UseOAuthBearerTokens(OAuthOptions);
+        // Enable the application to use bearer tokens to authenticate users
+          app.UseOAuthBearerTokens(OAuthOptions);
+    
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
@@ -67,5 +69,5 @@ namespace Näytevarasto
             //    ClientSecret = ""
             //});
         }
-    }
+}
 }

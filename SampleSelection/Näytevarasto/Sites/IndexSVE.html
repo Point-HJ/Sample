@@ -1,11 +1,11 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Näytevarasto</title>
+    <title>STGchannel.fi</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link href="Content/MyStyle.css" rel="stylesheet" />
+    <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <style>
         .glyphicon-shopping-cart {
@@ -21,17 +21,18 @@
             background-color: #002f40;
             color: white;
         }
+
         .jumbotron {
-    margin-bottom: 0;
-    background-color: rgb(18, 89, 117);
+            margin-bottom: 0;
+            background-color: rgb(18, 89, 117);
             color: white;
-}
-       #search{
+        }
+        #search{
             color:black;
         }
     </style>
     <script>
-        //Lataa tietoja -teksti
+
         $(document).ajaxStart(function () {
             $("#loading").show();
         }).ajaxStop(function () {
@@ -40,24 +41,24 @@
 
         //sivun alustus
         $(document).ready(function () {
-            console.log(localStorage);
             var selection = $('#selection');
+            var $RowCount = $('#pricesum');
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
-                location.href = "login.html"
+                location.href = "/Sites/login.html"
             }
             //uloskirjautuminen
             $('#logout').click(function () {
                 var ok = confirm('Haluatko varmasti kirjautua ulos?');
                 if (ok == true) {
                     localStorage.removeItem('accessToken');
-                    location.href = "login.html";
+                    location.href = "/Sites/login.html";
                 }
             });
-
+            //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
-            //ostoskorin tiedot
+
             $.ajax({
                 type: 'GET',
                 url: '/api/Carts',
@@ -77,8 +78,7 @@
                     $('#cartsum').append(counter);
                 }
             })
-
-            //haetaan suomenkielinen valikoima tietokannasta
+            //haetaan ruotsinkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
                 url: '/api/Selections',
@@ -88,7 +88,7 @@
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Suomi' && val.Season == '1/2020') {
+                        if (val.Language == 'Ruotsi' && val.Season == '1/2020') {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
@@ -98,14 +98,31 @@
                                 "<td>" + val.BookName + "</td>" +
                                 "<td>" + val.Publisher + "</td>" +
                                 "<td>" + val.Price + "€ </td>" +
-                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart'></span></a></td>" +
+                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart' data-id="+val.ISBN+"></span></a></td>" +
                                 '</tr>';
+
+                            //Show which rows already in cart
+                            $(function () {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/api/carts',
+                                    dataType: 'json',
+                                    success: function (cart) {
+                                        $.each(cart, function (i, cartdata) {
+                                            if (cartdata.CompanyID == JSON.parse(localStorage.getItem('userName')) && cartdata.IsInCart == true && cartdata.ISBN == val.ISBN) {
+                                                if (val.ISBN == cartdata.ISBN) {
+                                                  $(".glyphicon-shopping-cart[data-id="+val.ISBN+"]").css("color", "#29d646");
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            });
                         }
                     });
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
-                    //kuluvan päivän funktio
                     function getdate() {
                         var d = new Date();
                         var month = d.getMonth() + 1;
@@ -128,19 +145,23 @@
                                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             },
                             success: function (sel) {
-                                //check if user has order already
+                                  //check if user has order already
                                 $.ajax({
                                     type: 'GET',
                                     url: '/api/carts',
                                     dataType: 'json',
                                     success: function (cart) {
-                                        //var datefrom = $.datepicker.parseDate('12-01-2019');
-                                        //var dateto = $.datepicker.parseDate('12-06-2019');
-                                        //var cartdate =$.datepicker.parseDate(sel.Orderdate);
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
+                                            var datefrom = ('12-6-2019'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
+                                            var dateto = ('12-13-2019'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
+                                            var cartdate = (ord.Orderdate);
+                                            //Date.parse jäsentää päivämäärämerkkijonon ja palauttaa millisekuntien lukumäärän päivämäärämerkkijonon ja 1. tammikuuta 1970 keskiyön välillä.
+                                            var from = Date.parse(datefrom);
+                                            var to = Date.parse(dateto);
+                                            var cartD = Date.parse(cartdate);
 
-                                            if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false /*&& (cartdate <= dateto && cartdate >= datefrom)*/) {
+                                            if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && cartD <= to && cartD >= from) {
                                                 console.log('Tilaus on jo tehty');
                                                 orderdone = true;
                                                 $(".glyphicon-shopping-cart").css("color", "#c90c1c");
@@ -197,7 +218,6 @@
                     }
                 }
             });
-
             //etsi -toiminto
             $("#search").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -205,9 +225,8 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-
-
         });
+
 
     </script>
 
@@ -216,11 +235,11 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Näytevarastokauppa</h1>
+            <h1>STGchannel.fi</h1>
         </div>
     </div>
 
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse" style=" background-color: #002f40;">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -228,16 +247,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" id="username"></a>
+                <a class="navbar-brand" id="username"> </a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" style="height:50px" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Index.html">Valikoima</a></li>
-                    <li><a href="/IndexSVE.html">Svenska val</a></li>
-                    <li><a href="/History.html">Tilaushistoria</a></li>
+                    <li><a href="/Sites/Index.html">Valikoima</a></li>
+                    <li><a href="/Sites/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
+                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
                 </ul>
             </div>
         </div>
@@ -247,7 +266,7 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h2>Suomenkielinen valikoima</h2>
+                    <h2>Ruotsinkielinen valikoima</h2>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -277,7 +296,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p>@Näytevarasto 2019</p>
+        <p>@STGchannel.fi</p>
         <form class="form-inline">
         </form>
     </footer>

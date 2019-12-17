@@ -23,5 +23,6 @@ namespace Näytevarasto
         public Nullable<bool> IsInCart { get; set; }
         public string Author { get; set; }
         public string Publisher { get; set; }
+        public Nullable<bool> SentToJvs { get; set; }
     }
 }

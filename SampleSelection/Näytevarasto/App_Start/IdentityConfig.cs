@@ -6,6 +6,11 @@ using Microsoft.Owin;
 using Näytevarasto.Models;
 using System.Data.Entity;
 using System.Web;
+using System.Text;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System;
+using System.Collections.Generic;
 
 namespace Näytevarasto
 {
@@ -36,11 +41,11 @@ namespace Näytevarasto
             // Configure validation logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
-                RequiredLength = 3,
+                RequiredLength = 6,
                 RequireNonLetterOrDigit = false,
-                RequireDigit = false,
-                RequireLowercase = false,
-                RequireUppercase = false,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireUppercase = true,
             };
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
@@ -66,6 +71,7 @@ namespace Näytevarasto
             return appRoleManager;
         }
     }
+   
 }
 
         
