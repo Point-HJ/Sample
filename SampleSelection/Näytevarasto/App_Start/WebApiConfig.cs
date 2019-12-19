@@ -28,10 +28,7 @@ namespace Näytevarasto
             );
 
             config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
-               new IsoDateTimeConverter() { DateTimeFormat = "dd-MM-yyyy" });
-
-            //config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
-            //   new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
+               new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
 
 
             var json = config.Formatters.JsonFormatter;

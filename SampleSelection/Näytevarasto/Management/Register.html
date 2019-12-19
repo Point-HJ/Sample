@@ -30,13 +30,13 @@
                     },
                     success: function () {
                         console.log('OK');
-                        location.href = "login.html";
+                        alert('Rekisteröinti onnistui')
                     },
                     error: function (jqXHR) {
                         console.log(jqXHR.responseText);
+                        alert('Rekisteröinti epäonnistui, yritä uudelleen')
                     }
                 });
-
             });
         });
 
@@ -56,38 +56,38 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>CompanyID</td>
+                        <td>Asiakasnumero</td>
                         <td>
-                            <input type="text" id="txtCompanyID" placeholder="CompanyID" />
+                            <input type="text" id="txtCompanyID" placeholder="Asiakasnumero" />
                         </td>
                     </tr>
                     <tr>
-                        <td>CompanyName</td>
+                        <td>Asiakkaan nimi</td>
                         <td>
-                            <input type="text" id="txtCompanyName" placeholder="CompanyName" />
+                            <input type="text" id="txtCompanyName" placeholder="Asiakkaan nimi" />
                         </td>
                     </tr>
                     <tr>
-                        <td>Email</td>
+                        <td>Sähköposti</td>
                         <td>
-                            <input type="text" id="txtEmail" placeholder="Email" />
+                            <input type="text" id="txtEmail" placeholder="Sähköposti" />
                         </td>
                     </tr>
                     <tr>
-                        <td>Password</td>
+                        <td>Salasana</td>
                         <td>
-                            <input type="password" id="txtPassword" placeholder="Password" />
+                            <input type="password" id="txtPassword" placeholder="Salasana" />
                         </td>
                     </tr>
                     <tr>
-                        <td>Confirm password</td>
+                        <td>Vahvista salasana</td>
                         <td>
-                            <input type="password" id="txtConfirmPassword" placeholder="Confirm password" />
+                            <input type="password" id="txtConfirmPassword" placeholder="Vahvista salasana" />
                         </td>
                     </tr>
                     <tr class="success">
                         <td colspan="2">
-                            <input id="btnRegister" class="btn btn-success" type="button" value="Register" />
+                            <input id="btnRegister" class="btn btn-success" type="button" value="Rekisteröi" />
                         </td>
 
                     </tr>

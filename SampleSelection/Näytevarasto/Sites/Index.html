@@ -4,36 +4,11 @@
     <title>STGchannel.fi</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="../Content/MyStyle.css" rel="stylesheet" />
-
-    <style>
-        .glyphicon-shopping-cart {
-            color: white;
-        }
-
-        body {
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-
-        footer {
-            background-color: #002f40;
-            color: white;
-        }
-
-        .jumbotron {
-            margin-bottom: 0;
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-
-        #search {
-            color: black;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
+   
     <script>
         //Lataa tietoja -teksti
         $(document).ajaxStart(function () {
@@ -57,7 +32,7 @@
                     location.href = "/Sites/login.html";
                 }
             });
-
+            //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
             //ostoskorin tiedot
@@ -69,7 +44,7 @@
                     'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                 },
                 success: function (data) {
-                    console.log(data.length);
+
                     let counter = 0;
                     $.each(data, function (index, val) {
                         let uname = JSON.parse(localStorage.getItem('userName'));
@@ -80,8 +55,6 @@
                     $('#cartsum').append(counter);
                 }
             })
-
-
             //haetaan suomenkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
@@ -97,13 +70,12 @@
                             selection +=
                                 '<tr>' +
                                 "<td hidden>" + val.BookID + "</td>" +
-                                "<td class='ISBN'>" + val.ISBN + "</td>" +
+                                "<td>" + val.ISBN + "</td>" +
                                 "<td>" + val.Author + "</td>" +
                                 "<td>" + val.BookName + "</td>" +
                                 "<td>" + val.Publisher + "</td>" +
                                 "<td>" + val.Price + "€ </td>" +
-                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart' data-id="+val.ISBN+"></span></a></td>" +
-                             
+                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart' data-id=" + val.ISBN + "></span></a></td>" +
                                 '</tr>';
 
                             //Show which rows already in cart
@@ -116,7 +88,7 @@
                                         $.each(cart, function (i, cartdata) {
                                             if (cartdata.CompanyID == JSON.parse(localStorage.getItem('userName')) && cartdata.IsInCart == true && cartdata.ISBN == val.ISBN) {
                                                 if (val.ISBN == cartdata.ISBN) {
-                                                  $(".glyphicon-shopping-cart[data-id="+val.ISBN+"]").css("color", "#29d646");
+                                                    $(".glyphicon-shopping-cart[data-id=" + val.ISBN + "]").css("color", "#29d646");
                                                 }
                                             }
                                         })
@@ -125,7 +97,6 @@
                             });
                         }
                     });
-
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
@@ -160,6 +131,7 @@
                                     success: function (cart) {
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
+
                                             var datefrom = ('12-1-2019'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
                                             var dateto = ('12-31-2019'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
                                             var thisdate = new Date();
@@ -167,7 +139,6 @@
                                             var from = Date.parse(datefrom);
                                             var to = Date.parse(dateto);
                                             var now = Date.parse(thisdate);
-                                            //console.log(from + ' & ' + now + ' &' + to);
 
                                             if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && now <= to && now >= from) {
                                                 console.log('Tilaus on jo tehty');
@@ -235,84 +206,99 @@
                 });
             });
 
+            //taulun sorttaus
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+            document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+                const table = th.closest('#selection_table')
+                Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                    .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                    .forEach(tr => table.appendChild(tr));
+            })));
         });
-
-
-
 
     </script>
 
 </head>
 <body>
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1>STGchannel.fi</h1>
-        </div>
-    </div>
-
-    <nav class="navbar navbar-inverse" style=" background-color: #002f40;">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" id="username"></a>
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Sites/Index.html">Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html">Svenska val</a></li>
-                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
-                </ul>
+   
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>STGchannel.fi</h1>
             </div>
         </div>
-    </nav>
 
-    <div class="container">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <div class="container">
-                    <h1 id="orderdone"></h1>
-                    <h2>Suomenkielinen valikoima</h2>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th hidden>BookID</th>
-                                <th>ISBN</th>
-                                <th>Tekijä</th>
-                                <th>Kirjan nimi</th>
-                                <th>Kustantaja</th>
-                                <th>Hinta</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="selection_table"></tbody>
-                    </table>
+        <nav class="navbar navbar-inverse" style="background-color: #002f40;
+">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
                 </div>
-                <br>
-                <br>
-                <br>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;
+">
+                    <input id="search" type="text"  placeholder="Etsi..">
+                    <label id="username"></label>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+                        <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
+                        <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima</a></li>
+                        <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
+                        <li><a href="/Sites/History.html">Tilaushistoria</a></li>
+                        <li id="logout"><a href="#">Kirjaudu ulos</a></li>
+                        <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <form class="form-horizontal">
                 <div class="form-group">
                     <div class="container">
-                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
+                        <h1 id="orderdone"></h1>
+                        <h2>Suomenkielinen valikoima</h2>
+                        <table class="table table-bordered" id="selection_table">
+                            <thead>
+                                <tr>
+                                    <th hidden>BookID</th>
+                                    <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
+                                    <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
+                                    <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
+                                    <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
+                                    <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                           
+                        </table>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="form-group">
+                        <div class="container">
+                            <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
 
-    </div>
+        </div>
 
-    <footer class="container-fluid text-center">
-        <p>@STGchannel.fi</p>
-        <form class="form-inline">
-        </form>
-    </footer>
-
+        <footer class="container-fluid text-center">
+            <a href="https://www.kirjakeskus.fi/"> <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Porvoon Kirjakeskus" style="width: 10%; height: 10%;"></a>
+            <form class="form-inline">
+            </form>
+        </footer>
+    
 </body>
 </html>

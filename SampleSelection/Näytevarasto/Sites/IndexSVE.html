@@ -7,32 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <style>
-        .glyphicon-shopping-cart {
-            color: white;
-        }
-
-        body {
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-
-        footer {
-            background-color: #002f40;
-            color: white;
-        }
-
-        .jumbotron {
-            margin-bottom: 0;
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-        #search{
-            color:black;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
+   
     <script>
-
+        //Lataa tietoja -teksti
         $(document).ajaxStart(function () {
             $("#loading").show();
         }).ajaxStop(function () {
@@ -42,7 +20,6 @@
         //sivun alustus
         $(document).ready(function () {
             var selection = $('#selection');
-            var $RowCount = $('#pricesum');
             //jos kirjautumista ei löydy, ohjaa kirjautumissivulle
             if (localStorage.getItem('accessToken') == null) {
                 location.href = "/Sites/login.html"
@@ -58,7 +35,7 @@
             //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
-
+            //ostoskorin tiedot
             $.ajax({
                 type: 'GET',
                 url: '/api/Carts',
@@ -67,7 +44,7 @@
                     'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                 },
                 success: function (data) {
-                    console.log(data.length);
+
                     let counter = 0;
                     $.each(data, function (index, val) {
                         let uname = JSON.parse(localStorage.getItem('userName'));
@@ -98,7 +75,7 @@
                                 "<td>" + val.BookName + "</td>" +
                                 "<td>" + val.Publisher + "</td>" +
                                 "<td>" + val.Price + "€ </td>" +
-                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart' data-id="+val.ISBN+"></span></a></td>" +
+                                "<td><a href='#'><span class='glyphicon glyphicon-shopping-cart' data-id=" + val.ISBN + "></span></a></td>" +
                                 '</tr>';
 
                             //Show which rows already in cart
@@ -111,7 +88,7 @@
                                         $.each(cart, function (i, cartdata) {
                                             if (cartdata.CompanyID == JSON.parse(localStorage.getItem('userName')) && cartdata.IsInCart == true && cartdata.ISBN == val.ISBN) {
                                                 if (val.ISBN == cartdata.ISBN) {
-                                                  $(".glyphicon-shopping-cart[data-id="+val.ISBN+"]").css("color", "#29d646");
+                                                    $(".glyphicon-shopping-cart[data-id=" + val.ISBN + "]").css("color", "#29d646");
                                                 }
                                             }
                                         })
@@ -123,6 +100,7 @@
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
+                    //kuluvan päivän funktio
                     function getdate() {
                         var d = new Date();
                         var month = d.getMonth() + 1;
@@ -145,7 +123,7 @@
                                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             },
                             success: function (sel) {
-                                  //check if user has order already
+                                //check if user has order already
                                 $.ajax({
                                     type: 'GET',
                                     url: '/api/carts',
@@ -153,20 +131,44 @@
                                     success: function (cart) {
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
-                                            var datefrom = ('12-6-2019'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
-                                            var dateto = ('12-13-2019'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
-                                            var cartdate = (ord.Orderdate);
-                                            //Date.parse jäsentää päivämäärämerkkijonon ja palauttaa millisekuntien lukumäärän päivämäärämerkkijonon ja 1. tammikuuta 1970 keskiyön välillä.
-                                            var from = Date.parse(datefrom);
-                                            var to = Date.parse(dateto);
-                                            var cartD = Date.parse(cartdate);
+                                            //$.ajax({
+                                            //    type: 'GET',
+                                            //    url: '/api/seasons',
+                                            //    dataType: 'json',
+                                            //    success: function (seasons) {
 
-                                            if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && cartD <= to && cartD >= from) {
-                                                console.log('Tilaus on jo tehty');
-                                                orderdone = true;
-                                                $(".glyphicon-shopping-cart").css("color", "#c90c1c");
-                                            }
+
+
+                                                    //var startdate = season.StartDate;
+                                                    //var start = Date.parse(startdate);
+                                                    // var stopdate = season.StopDate;
+                                                    //var stop = Date.parse(stopdate);
+                                                    //var thisdate = new Date();
+                                                    //var now = Date.parse(thisdate);
+                                                    var datefrom = ('12-1-2019');
+                                                    var dateto = ('12-31-2019');
+                                                    var thisdate = new Date();
+                                                    var from = Date.parse(datefrom);
+                                                    var to = Date.parse(dateto);
+                                                    var now = Date.parse(thisdate);
+
+
+
+                                                    //    console.log('Start ' + start + ' Now ' + now + ' Stop ' + stop)
+                                                    if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && now <= to && now >= from) {
+                                                        console.log('Tilaus on jo tehty');
+                                                        orderdone = true;
+                                                        $(".glyphicon-shopping-cart").css("color", "#c90c1c");
+                                                        $("#orderdone").text("Tilaus on jo tehty tälle kaudelle ");
+                                                    }
+
+                                            //    },
+                                            //    error: function () {
+                                            //        alert: ('Virhe ladattaessa kausia')
+                                            //    }
+                                            //});
                                         })
+
                                         //check if Book is in cart already
                                         if (orderdone == false) {
                                             var present = false;
@@ -225,8 +227,21 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-        });
 
+            //taulun sorttaus
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+            document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+                const table = th.closest('#selection_table')
+                Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                    .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                    .forEach(tr => table.appendChild(tr));
+            })));
+        });
 
     </script>
 
@@ -247,13 +262,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" id="username"> </a>
+
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
-                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
+                <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width:7%;height:7%;">
+                <input id="search" type="text" placeholder="Etsi..">
+                <label id="username"></label>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Sites/Index.html">Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height:20px"></span>  Valikoima</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
                     <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
@@ -266,20 +285,20 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
+                    <h1 id="orderdone"></h1>
                     <h2>Ruotsinkielinen valikoima</h2>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="selection_table">
                         <thead>
                             <tr>
                                 <th hidden>BookID</th>
-                                <th>ISBN</th>
-                                <th>Tekijä</th>
-                                <th>Kirjan nimi</th>
-                                <th>Kustantaja</th>
-                                <th>Hinta</th>
+                                <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="selection_table"></tbody>
                     </table>
                 </div>
                 <br>
@@ -296,7 +315,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p>@STGchannel.fi</p>
+        <a href="https://www.kirjakeskus.fi/"> <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Porvoon Kirjakeskus" style="width:10%;height:10%;"></a>
         <form class="form-inline">
         </form>
     </footer>

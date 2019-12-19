@@ -1,5 +1,9 @@
-﻿
-
+﻿.modal {
+    color: black;
+}
+.dropdown{
+    padding: 5px;
+}
 
 
 h1 {
@@ -62,12 +66,29 @@ body {
 /* Remove the jumbotron's default bottom margin */
 .jumbotron {
     margin-bottom: 0;
+    background-color: rgb(18, 89, 117);
+    color: white;
 }
 
 /* Add a gray background color and some padding to the footer */
 footer {
-    background-color: #f2f2f2;
+    background-color: #002f40;
+    color: white;
     padding: 25px;
+}
+#search {
+    color: black;
+    height: 40px;
+}
+
+table, th, td {
+    border: 1px solid white;
+    text-align: center;
+    padding: 5px;
+}
+
+th {
+    cursor: pointer;
 }
 
 

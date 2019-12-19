@@ -1,66 +1,21 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>STGchannel.fi</title>
+    <title>Ostoskori</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../Content/MyStyle.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <style>
-        .glyphicon-shopping-cart {
-            color: white;
-        }
-
-        body {
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-
-        footer {
-            background-color: #002f40;
-            color: white;
-        }
-
-        .jumbotron {
-            margin-bottom: 0;
-            background-color: rgb(18, 89, 117);
-            color: white;
-        }
-
-        .button1 {
-            background-color: #002f40;
-            color: white;
-            border: 1px solid white;
-        }
-
-            .button1:hover {
-                background-color: #002f40;
-                color: wheat;
-            }
-
-            .button1:focus {
-                background-color: #002f40;
-                color: white;
-            }
-
-        a {
-            color: white;
-        }
-
-            a:hover {
-                color: wheat;
-            }
-
-        #search {
-            color: black;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
+   
     <script>
         //Lataa tietoja -teksti
+       
         $(document).ajaxStart(function () {
-            $("#loading").show();
+         $("#loading").show(); 
         }).ajaxStop(function () {
             $("#loading").hide('slow');
         });
@@ -112,13 +67,13 @@
                     $('#selection_table').append(selection);
 
                     //lasketaan ostoskorissa olevien tuotteiden määrä
-                    var rowCount = $('#selection_table tr').length;
+                    var rowCount = $('#selection_table tr').length-1;
                     $('.cartsum').append(rowCount);
 
                     //lasketaan ostoskorissa olevien hinta yhteensä
                     var sum = 0;
                     $('td[id^="price"]').each(function (k, v) {
-                        sum += parseInt($(this).text());
+                        sum += parseFloat($(this).text());
                         if (k === $('td[id^="price"]').length - 1) $('#sum').text(sum);
                     });
                     $('.pricesum').text(sum);
@@ -156,54 +111,71 @@
                             (('' + month).length < 2 ? '0' : '') + month + '/' +
                             (('' + day).length < 2 ? '0' : '') + day;
                     }
+
                     $('#send').click(function (e) {
                         e.preventDefault();
+                        var ok = confirm("Haluatko varmasti lähettää tilauksen? Voit tehdä vain yhden tilauksen tälle kaudelle. ");
+                        if (ok == true) {
+                            $.ajax({
+                                type: 'GET',
+                                url: '/api/carts/',
+                                dataType: 'json',
+                                success: function (data) {
+                                    var present = false;
+                                    $.each(data, function (i, sel) {
 
-                        $.ajax({
-                            type: 'GET',
-                            url: '/api/carts/',
-                            dataType: 'json',
-                            success: function (data) {
-                                var present = false;
-                                $.each(data, function (i, sel) {
+                                        if (sel.CompanyID == JSON.parse(localStorage.getItem('userName')) && sel.IsInCart == true) {
+                                            var cart = {
+                                                OrderID: sel.OrderID,
+                                                CompanyID: sel.CompanyID,
+                                                Orderdate: sel.Orderdate,
+                                                ISBN: sel.ISBN,
+                                                BookName: sel.BookName,
+                                                Author: sel.Author,
+                                                Publisher: sel.Publisher,
+                                                Price: sel.Price,
+                                                Season: sel.Season,
+                                                IsInCart: false,
+                                                SentToJvs: false,
 
-                                    if (sel.CompanyID == JSON.parse(localStorage.getItem('userName')) && sel.IsInCart == true) {
-                                        var cart = {
-                                            OrderID: sel.OrderID,
-                                            CompanyID: sel.CompanyID,
-                                            Orderdate: sel.Orderdate,
-                                            ISBN: sel.ISBN,
-                                            BookName: sel.BookName,
-                                            Author: sel.Author,
-                                            Publisher: sel.Publisher,
-                                            Price: sel.Price,
-                                            Season: sel.Season,
-                                            IsInCart: false,
-                                            SentToJvs: false,
-
-                                        };
-                                        $.ajax({
-                                            method: 'put',
-                                            url: '/api/carts/' + cart.OrderID,
-                                            data: JSON.stringify(cart),
-                                            contentType: 'application/json',
-                                            success: function () {
-                                                console.log('Tilaus tallennettu')
-                                                location.reload();
-                                                localStorage.removeItem('cart');
-                                            },
-                                            error: function () {
-                                                alert('Virhe');
-                                            }
-                                        });
-                                    }
-                                });
-                                alert('Tilaus lähetetty');
-                            }
-                        });
+                                            };
+                                            $.ajax({
+                                                method: 'put',
+                                                url: '/api/carts/' + cart.OrderID,
+                                                data: JSON.stringify(cart),
+                                                contentType: 'application/json',
+                                                success: function () {
+                                                    console.log('Tilaus tallennettu')
+                                                    location.reload();
+                                                    localStorage.removeItem('cart');
+                                                },
+                                                error: function () {
+                                                    alert('Virhe');
+                                                }
+                                            });
+                                        }
+                                    });
+                                    alert('Tilaus lähetetty');
+                                }
+                            });
+                        }
                     });
                 },
             });
+             //taulun sorttaus
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+            document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+                const table = th.closest('#selection_table')
+                Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                    .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                    .forEach(tr => table.appendChild(tr));
+            })));
+
         });
 
     </script>
@@ -225,13 +197,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" id="companyname"></a>
+               
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
-                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
+                <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width:7%;height:7%;">
+                <input id="search" type="text" placeholder="Etsi..">
+                <label id="companyname"></label>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Sites/Index.html">Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html">Svenska val</a></li>
+                    <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height:20px"></span>  Valikoima</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
                     <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
@@ -246,19 +222,19 @@
             <div class="form-group">
                 <div class="container">
                     <h3>Ostoskorissa <span class="cartsum"></span> tuotetta</h3>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="selection_table">
                         <thead>
                             <tr>
                                 <th hidden>OrderID</th>
-                                <th>ISBN</th>
-                                <th>Tekijä</th>
-                                <th>Kirjan nimi</th>
-                                <th>Kustantaja</th>
-                                <th>Hinta</th>
+                                <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="selection_table"></tbody>
+                     
                     </table>
                     <div class="row">
                         <div class="col-md-4"></div>
@@ -270,9 +246,9 @@
                     <br />
                     <div class="row">
                         <div class="col-md-8"></div>
-                        <div class="col-md-2" style="font-size:14px"><a href="/Sites/Index.html">Palaa takaisin valikoimaan</a></div>
+                        <div class="col-md-2" style="font-size: 14px"><a href="/Sites/Index.html">Palaa takaisin valikoimaan</a></div>
                         <div class="col-md-2">
-                            <button type="submit" id="send" class="btn button1">Tallenna tilaus</button>
+                            <button type="submit" id="send" class="btn button1">Lähetä tilaus</button>
                         </div>
                     </div>
                 </div>
@@ -290,7 +266,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <p>@STGchannel.fi</p>
+        <a href="https://www.kirjakeskus.fi/"> <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Porvoon Kirjakeskus" style="width:10%;height:10%;"></a>
         <form class="form-inline">
         </form>
     </footer>

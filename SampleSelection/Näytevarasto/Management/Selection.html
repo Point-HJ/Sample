@@ -5,11 +5,11 @@
     <title>Näytevarasto</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <link href="/Content/MyStyle.css" rel="stylesheet" />
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   
     <script>
 
         $(document).ajaxStart(function () {
@@ -113,7 +113,7 @@
 
                         $.ajax({
                             type: 'GET',
-                            url: 'api/Selections/' + BookID,
+                            url: '/api/Selections/' + BookID,
                             dataType: 'json',
                             global: false,
                             success: function (data1) {
@@ -149,11 +149,11 @@
 
                             $.ajax({
                                 type: 'put',
-                                url: 'api/selections/' + details.BookID,
+                                url: '/api/selections/' + details.BookID,
                                 data: JSON.stringify(details),
                                 contentType: 'application/json',
                                 success: function () {
-                                    alert('Muokkaus onnistui');
+                                   
                                     location.reload();
                                 },
                                 error: function () {
@@ -206,7 +206,7 @@
 
                 // näytetään ikkuna
                 $("#mdNewSelTitle").text("Lisää uusi tuote");
-                $("#newSelModalDialog").modal("show");
+                $("#newSelModalDialog").modal();
             });
 
             $("#mdNewSelSaveButton").click(function () {
@@ -259,7 +259,7 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse" style="background-color: #002f40">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -270,9 +270,9 @@
                 <a href="Index.html" class="navbar-brand" id="username"></a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
-                <input id="search" type="text" style="height:50px" placeholder="Etsi..">
+                <input id="search" type="text" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Index.html">Valikoima</a></li>
+                    <li><a href="/Sites/Index.html">Valikoima</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
 
                 </ul>
@@ -294,7 +294,7 @@
             </div>
             <div class="form-group">
                 <div class="container">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered"  id="selection_table">
                         <thead>
                             <tr>
                                 <th>Muokkaa</th>
@@ -309,7 +309,6 @@
                                 <th>Poista</th>
                             </tr>
                         </thead>
-                        <tbody id="selection_table"></tbody>
                     </table>
                 </div>
                 <br>

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var seasontable = $('#seasontable')
+           
+
+            $.ajax({
+                type: 'GET',
+                url: '/api/seasons',
+                dataType: 'json',
+                success: function (seasons) {
+                    $.each(seasons, function (i, season) {
+
+                        var startdate = season.StartDate;
+                        var start = Date.parse(startdate);
+
+                        var stopdate = season.StopDate;
+                        var stop = Date.parse(stopdate);
+
+                        var thisdate = new Date();
+                        var now = Date.parse(thisdate);
+
+                        console.log('Start '+ start +' Now '+ now + ' Stop ' + stop)
+
+                        if (now <= stop && now >= start) {
+                            
+                         seasontable +=  '<tr >' +
+                            "<td>" + season.Season + "</td>" +
+                            "<td>" + startdate + "</td>" +
+                            "<td>" + stopdate + "</td>" +
+                            '</tr>';
+                        }
+                    });
+
+                    $('#season_table').append(seasontable);
+                    
+                },
+                error: function () {
+                    alert: ('Virhe ladattaessa kausia')
+                }
+            });
+
+
+                
+
+
+        });
+
+    </script>
+
+
+
+</head>
+<body>
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    
+                    <th>Kausi</th>
+                    <th>Alkupäivä</th>
+                    <th>Loppupäivä</th>
+                   
+                </tr>
+            </thead>
+            <tbody id="season_table"></tbody>
+        </table>
+    </div>
+    </body>
+</html>
