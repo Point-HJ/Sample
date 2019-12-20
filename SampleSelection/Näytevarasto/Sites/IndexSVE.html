@@ -36,25 +36,25 @@
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
 
             //ostoskorin tiedot
-            $.ajax({
-                type: 'GET',
-                url: '/api/Carts',
-                dataType: 'json',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                },
-                success: function (data) {
+            //$.ajax({
+            //    type: 'GET',
+            //    url: '/api/Carts',
+            //    dataType: 'json',
+            //    headers: {
+            //        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            //    },
+            //    success: function (data) {
 
-                    let counter = 0;
-                    $.each(data, function (index, val) {
-                        let uname = JSON.parse(localStorage.getItem('userName'));
-                        if (val.CompanyID == uname && val.IsInCart == true) {
-                            counter = counter + 1;
-                        }
-                    });
-                    $('#cartsum').append(counter);
-                }
-            })
+            //        let counter = 0;
+            //        $.each(data, function (index, val) {
+            //            let uname = JSON.parse(localStorage.getItem('userName'));
+            //            if (val.CompanyID == uname && val.IsInCart == true) {
+            //                counter = counter + 1;
+            //            }
+            //        });
+            //        $('#cartsum').append(counter);
+            //    }
+            //})
             //haetaan ruotsinkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
@@ -65,7 +65,7 @@
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Ruotsi' && val.Season == '1/2020') {
+                        if (val.Language == 'Ruotsi' && val.Season == '01/2020') {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr >' +
@@ -112,7 +112,8 @@
                     }
 
                     //klikatessa ostoskoria, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin, jos käyttäjä ei ole vielä tehnyt tilausta
-                    $(".glyphicon-shopping-cart").on("click", function () {
+                    $(".glyphicon-shopping-cart").on("click", function (e) {
+                        e.preventDefault();
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         $.ajax({
@@ -145,8 +146,8 @@
                                                     //var stop = Date.parse(stopdate);
                                                     //var thisdate = new Date();
                                                     //var now = Date.parse(thisdate);
-                                                    var datefrom = ('12-1-2019');
-                                                    var dateto = ('12-31-2019');
+                                                    var datefrom = ('1-7-2020'); //MMddYYYY
+                                                    var dateto = ('1-31-2020');//MMddYYYY
                                                     var thisdate = new Date();
                                                     var from = Date.parse(datefrom);
                                                     var to = Date.parse(dateto);
@@ -174,7 +175,7 @@
                                             var present = false;
                                             $.each(cart, function (i, carts) {
                                                 if (carts.CompanyID == JSON.parse(localStorage.getItem('userName')) && carts.ISBN == sel.ISBN) {
-                                                    alert('Tuote on jo ostoskorissa');
+                                                   // alert('Tuote on jo ostoskorissa');
                                                     present = true;
                                                 }
                                             })
@@ -196,7 +197,7 @@
                                                     data: toCart,
                                                     success: function () {
                                                         console.log('Added to cart ' + BookID);
-                                                        location.reload();
+                                                       // location.reload();
                                                     },
                                                     error: function () {
                                                         alert('Virhe!');
@@ -275,7 +276,8 @@
                     <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori</a></li>
+
                 </ul>
             </div>
         </div>
@@ -295,7 +297,7 @@
                                 <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
                                 <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
                                 <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
                                 <th></th>
                             </tr>
                         </thead>

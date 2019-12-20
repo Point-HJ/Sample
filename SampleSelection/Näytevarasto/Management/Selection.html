@@ -106,8 +106,8 @@
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
-                    $(".glyphicon-pencil").on("click", function () {
-
+                    $(".glyphicon-pencil").on("click", function (e) {
+                        e.preventDefault();
                         // etsitään lomakkeen tiedot klikatulta riviltä
                         var BookID = $(this).parent().parent().next().text();
 

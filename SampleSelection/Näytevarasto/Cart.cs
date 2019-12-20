@@ -24,5 +24,6 @@ namespace Näytevarasto
         public string Author { get; set; }
         public string Publisher { get; set; }
         public Nullable<bool> SentToJvs { get; set; }
+        public string Reference { get; set; }
     }
 }

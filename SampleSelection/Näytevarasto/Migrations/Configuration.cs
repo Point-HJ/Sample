@@ -25,7 +25,7 @@ namespace Näytevarasto.Migrations
             var user = new ApplicationUser()
             {
                 UserName = "SuperPowerHeidi",
-                Email = "heidi.joenpolvi@gmail.com",
+                Email = "heidi.joenpolvi@bookygroup.fi",
                 EmailConfirmed = false,
                 CompanyID = 100,
 
@@ -35,14 +35,13 @@ namespace Näytevarasto.Migrations
 
             if (roleManager.Roles.Count() == 0)
             {
-                roleManager.Create(new IdentityRole { Name = "SuperAdmin" });
                 roleManager.Create(new IdentityRole { Name = "Admin" });
                 roleManager.Create(new IdentityRole { Name = "User" });
             }
 
             var adminUser = manager.FindByName("SuperPowerUser");
 
-            manager.AddToRoles(adminUser.Id, new string[] { "SuperAdmin", "Admin" });
+            manager.AddToRoles(adminUser.Id, new string[] { "Admin" });
             //  This method will be called after migrating to the latest version.
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 

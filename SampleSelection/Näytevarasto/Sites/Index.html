@@ -8,7 +8,7 @@
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
-   
+
     <script>
         //Lataa tietoja -teksti
         $(document).ajaxStart(function () {
@@ -34,27 +34,28 @@
             });
             //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
+            // ostoskorin tiedot
+            
+                //$.ajax({
+                //    type: 'GET',
+                //    url: '/api/Carts',
+                //    dataType: 'json',
+                //    headers: {
+                //        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                //    },
+                //    success: function (data) {
 
-            //ostoskorin tiedot
-            $.ajax({
-                type: 'GET',
-                url: '/api/Carts',
-                dataType: 'json',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                },
-                success: function (data) {
-
-                    let counter = 0;
-                    $.each(data, function (index, val) {
-                        let uname = JSON.parse(localStorage.getItem('userName'));
-                        if (val.CompanyID == uname && val.IsInCart == true) {
-                            counter = counter + 1;
-                        }
-                    });
-                    $('#cartsum').append(counter);
-                }
-            })
+                //        let counter = 0;
+                //        $.each(data, function (index, val) {
+                //            let uname = JSON.parse(localStorage.getItem('userName'));
+                //            if (val.CompanyID == uname && val.IsInCart == true) {
+                //                counter = counter + 1;
+                //            }
+                //        });
+                //        $('#cartsum').append(counter);
+                //    }
+                //})
+            
             //haetaan suomenkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
@@ -65,7 +66,7 @@
                 },
                 success: function (data) {
                     $.each(data, function (i, val) {
-                        if (val.Language == 'Suomi' && val.Season == '1/2020') {
+                        if (val.Language == 'Suomi' && val.Season == '01/2020') {
                             //luodaan taulukko, johon arvot tuodaan halutuista sarakkeista
                             selection +=
                                 '<tr>' +
@@ -100,6 +101,8 @@
                     //näytetään taulukko sivulla
                     $('#selection_table').append(selection);
 
+
+
                     //kuluvan päivän funktio
                     function getdate() {
                         var d = new Date();
@@ -112,7 +115,8 @@
                     }
 
                     //klikatessa ostoskoria, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin, jos käyttäjä ei ole vielä tehnyt tilausta
-                    $(".glyphicon-shopping-cart").on("click", function () {
+                    $(".glyphicon-shopping-cart").on("click", function (e) {
+                        e.preventDefault();
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         $.ajax({
@@ -132,8 +136,8 @@
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
 
-                                            var datefrom = ('12-1-2019'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
-                                            var dateto = ('12-31-2019'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
+                                            var datefrom = ('1-7-2020'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
+                                            var dateto = ('1-31-2020'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
                                             var thisdate = new Date();
                                             //Date.parse jäsentää päivämäärämerkkijonon ja palauttaa millisekuntien lukumäärän päivämäärämerkkijonon ja 1. tammikuuta 1970 keskiyön välillä.
                                             var from = Date.parse(datefrom);
@@ -152,7 +156,7 @@
                                             var present = false;
                                             $.each(cart, function (i, carts) {
                                                 if (carts.CompanyID == JSON.parse(localStorage.getItem('userName')) && carts.ISBN == sel.ISBN) {
-                                                    alert('Tuote on jo ostoskorissa');
+                                                   // alert('Tuote on jo ostoskorissa');
                                                     present = true;
                                                 }
                                             })
@@ -174,7 +178,9 @@
                                                     data: toCart,
                                                     success: function (cart) {
                                                         console.log('Added to cart ' + BookID);
-                                                        location.reload();
+                                                        //  Countcart();
+                                                        // location.reload();
+
                                                     },
                                                     error: function () {
                                                         alert('Virhe!');
@@ -182,11 +188,14 @@
                                                 });
                                             }
                                         }
+
                                     }
                                 });
                             }
                         });
+
                     });
+
                 },
                 error: function (jqXHR) {
                     if (jqXHR.status == "401") {
@@ -198,6 +207,7 @@
                     }
                 }
             });
+
             //etsi -toiminto
             $("#search").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -224,81 +234,81 @@
 
 </head>
 <body>
-   
-        <div class="jumbotron">
-            <div class="container text-center">
-                <h1>STGchannel.fi</h1>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>STGchannel.fi</h1>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse" style="background-color: #002f40;
+">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;
+">
+                <input id="search" type="text" placeholder="Etsi..">
+                <label id="username"></label>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
+                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
+                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
+                    <li id="cartsum"><a href="/Sites/Cart.html">Ostoskori</a></li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <nav class="navbar navbar-inverse" style="background-color: #002f40;
-">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+    <div class="container">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="container">
+                    <h1 id="orderdone"></h1>
+                    <h2>Suomenkielinen valikoima</h2>
+                    <table class="table table-bordered" id="selection_table">
+                        <thead>
+                            <tr>
+                                <th hidden>BookID</th>
+                                <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
+                                <th></th>
+                            </tr>
+                        </thead>
 
+                    </table>
                 </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;
-">
-                    <input id="search" type="text"  placeholder="Etsi..">
-                    <label id="username"></label>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                        <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
-                        <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima</a></li>
-                        <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
-                        <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                        <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                        <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <div class="container">
-            <form class="form-horizontal">
+                <br>
+                <br>
+                <br>
                 <div class="form-group">
                     <div class="container">
-                        <h1 id="orderdone"></h1>
-                        <h2>Suomenkielinen valikoima</h2>
-                        <table class="table table-bordered" id="selection_table">
-                            <thead>
-                                <tr>
-                                    <th hidden>BookID</th>
-                                    <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
-                                    <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
-                                    <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
-                                    <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
-                                    <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                           
-                        </table>
-                    </div>
-                    <br>
-                    <br>
-                    <br>
-                    <div class="form-group">
-                        <div class="container">
-                            <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
-                        </div>
+                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
                     </div>
                 </div>
-            </form>
+            </div>
+        </form>
 
-        </div>
+    </div>
 
-        <footer class="container-fluid text-center">
-            <a href="https://www.kirjakeskus.fi/"> <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Porvoon Kirjakeskus" style="width: 10%; height: 10%;"></a>
-            <form class="form-inline">
-            </form>
-        </footer>
-    
+    <footer class="container-fluid text-center">
+        <a href="https://www.kirjakeskus.fi/"> <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Porvoon Kirjakeskus" style="width: 10%; height: 10%;"></a>
+        <form class="form-inline">
+        </form>
+    </footer>
+
 </body>
 </html>

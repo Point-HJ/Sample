@@ -15,7 +15,7 @@ namespace Näytevarasto.Controllers
 {
     public class CartsController : ApiController
     {
-        private NaytevarastoEntities db = new NaytevarastoEntities();
+        private STGchannelEntities db = new STGchannelEntities();
 
         // GET: api/Carts
         public IQueryable<Cart> GetCart()

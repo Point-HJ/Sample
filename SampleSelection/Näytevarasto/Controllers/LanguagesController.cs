@@ -15,7 +15,7 @@ namespace Näytevarasto.Controllers
 {
     public class LanguagesController : ApiController
     {
-        private NaytevarastoEntities db = new NaytevarastoEntities();
+        private STGchannelEntities db = new STGchannelEntities();
 
         // GET: api/Languages
         public IQueryable<Language> GetLanguage()

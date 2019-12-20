@@ -15,7 +15,7 @@ namespace Näytevarasto.Controllers
 {
     public class SeasonsController : ApiController
     {
-        private NaytevarastoEntities db = new NaytevarastoEntities();
+        private STGchannelEntities db = new STGchannelEntities();
 
         // GET: api/Seasons
         public IQueryable<Seasons> GetSeasons()
