@@ -29,7 +29,7 @@
                 var ok = confirm('Haluatko varmasti kirjautua ulos?');
                 if (ok == true) {
                     localStorage.removeItem('accessToken');
-                    location.href = "/Management/login.html";
+                    location.href = "/Management/mgmlogin.html";
                 }
             });
 
@@ -192,7 +192,8 @@
                 }
             });
 
-            $("#newSelection").on("click", function () {
+            $("#newSelection").on("click", function (e) {
+                e.preventDefault();
                 console.log('Nappia painettu')
                 // tyhjennetään ikkunan tiedot
 
@@ -255,7 +256,7 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Näytevarastokauppa</h1>
+            <h1>STGchannel.fi / Management</h1>
         </div>
     </div>
 
@@ -272,8 +273,10 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <input id="search" type="text" placeholder="Etsi..">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/Sites/Index.html">Valikoima</a></li>
+                    <li><a href="/Management/register.html">Rekisteröi uusi asiakas</a></li>
+                    <li><a href="/Sites/Index.html">STGhannel.fi</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
+
 
                 </ul>
             </div>
