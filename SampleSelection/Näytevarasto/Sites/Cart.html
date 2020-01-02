@@ -14,12 +14,6 @@
     <script>
         //Lataa tietoja -teksti
 
-        $(document).ajaxStart(function () {
-            $("#loading").show();
-        }).ajaxStop(function () {
-            $("#loading").hide('slow');
-        });
-
         //sivun alustus
         $(document).ready(function () {
             var selection = $('#selection');
@@ -265,14 +259,9 @@
                 <br>
                 <br>
                 <br>
-                <div class="form-group">
-                    <div class="container">
-                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
-                    </div>
-                </div>
+               
             </div>
         </form>
-
     </div>
 
     <footer class="container-fluid text-center">

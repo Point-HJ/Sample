@@ -56,7 +56,26 @@
                 }
             });
             $('#companyname').text(JSON.parse(localStorage.getItem('userName')));
+             // ostoskorin tiedot
+             $.ajax({
+                type: 'GET',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
 
+            }).then(function (data) {
+                let counter = 0;
+                $.each(data, function (index, val) {
+                    let uname = JSON.parse(localStorage.getItem('userName'));
+                    if (val.CompanyID == uname && val.IsInCart == true) {
+                        counter = counter + 1;
+                    }
+                });
+                $('#cartsum').append(counter);
+
+            })
 
             //haetaan ostoskorin tiedot CompanyID:n perusteella
             $.ajax({
@@ -143,7 +162,8 @@
                     <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html">Ostoskori</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori  <span id="cartsum"></span> kpl</a></li>
+
 
 
                 </ul>

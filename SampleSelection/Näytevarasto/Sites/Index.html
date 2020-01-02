@@ -34,28 +34,29 @@
             });
             //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
-            // ostoskorin tiedot
-            
-                //$.ajax({
-                //    type: 'GET',
-                //    url: '/api/Carts',
-                //    dataType: 'json',
-                //    headers: {
-                //        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                //    },
-                //    success: function (data) {
 
-                //        let counter = 0;
-                //        $.each(data, function (index, val) {
-                //            let uname = JSON.parse(localStorage.getItem('userName'));
-                //            if (val.CompanyID == uname && val.IsInCart == true) {
-                //                counter = counter + 1;
-                //            }
-                //        });
-                //        $('#cartsum').append(counter);
-                //    }
-                //})
-            
+            // ostoskorin tiedot
+            $.ajax({
+                type: 'GET',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+
+            }).then(function (data) {
+                let counter = 0;
+                $.each(data, function (index, val) {
+                    let uname = JSON.parse(localStorage.getItem('userName'));
+                    if (val.CompanyID == uname && val.IsInCart == true) {
+                        counter = counter + 1;
+                    }
+                });
+                $('#cartsum').append(counter);
+
+            })
+
+
             //haetaan suomenkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
@@ -117,6 +118,9 @@
                     //klikatessa ostoskoria, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin, jos käyttäjä ei ole vielä tehnyt tilausta
                     $(".glyphicon-shopping-cart").on("click", function (e) {
                         e.preventDefault();
+                        // ostoskorin tiedot
+                       
+                      
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         $.ajax({
@@ -136,7 +140,7 @@
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
 
-                                            var datefrom = ('1-7-2020'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
+                                            var datefrom = ('1-1-2020'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
                                             var dateto = ('1-31-2020'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
                                             var thisdate = new Date();
                                             //Date.parse jäsentää päivämäärämerkkijonon ja palauttaa millisekuntien lukumäärän päivämäärämerkkijonon ja 1. tammikuuta 1970 keskiyön välillä.
@@ -145,7 +149,7 @@
                                             var now = Date.parse(thisdate);
 
                                             if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && now <= to && now >= from) {
-                                                console.log('Tilaus on jo tehty');
+                                                //  console.log('Tilaus on jo tehty');
                                                 orderdone = true;
                                                 $(".glyphicon-shopping-cart").css("color", "#c90c1c");
                                                 $("#orderdone").text("Tilaus on jo tehty tälle kaudelle");
@@ -156,7 +160,7 @@
                                             var present = false;
                                             $.each(cart, function (i, carts) {
                                                 if (carts.CompanyID == JSON.parse(localStorage.getItem('userName')) && carts.ISBN == sel.ISBN) {
-                                                   // alert('Tuote on jo ostoskorissa');
+                                                    // alert('Tuote on jo ostoskorissa');
                                                     present = true;
                                                 }
                                             })
@@ -177,10 +181,22 @@
                                                     url: '/api/Carts',
                                                     data: toCart,
                                                     success: function (cart) {
-                                                        console.log('Added to cart ' + BookID);
-                                                        //  Countcart();
-                                                        // location.reload();
+                                                      // ostoskorin tiedot
+                                                        $.ajax({
+                                                            type: 'GET',
+                                                            url: '/api/Carts',
+                                                            dataType: 'json',
+                                                        }).then(function (data) {
+                                                            let counter = 0;
+                                                            $.each(data, function (index, val) {
+                                                                let uname = JSON.parse(localStorage.getItem('userName'));
+                                                                if (val.CompanyID == uname && val.IsInCart == true) {
+                                                                    counter = counter + 1;
+                                                                }
+                                                            });
+                                                            $('#cartsum').empty().append(counter);
 
+                                                        })
                                                     },
                                                     error: function () {
                                                         alert('Virhe!');
@@ -244,17 +260,16 @@
     <nav class="navbar navbar-inverse" style="background-color: #002f40;
 ">
         <div class="container-fluid">
-            <div class="navbar-header">
+            <!--<div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
 
-            </div>
+            </div>-->
             <div class="collapse navbar-collapse" id="myNavbar">
-                <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;
-">
+                <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;">
                 <input id="search" type="text" placeholder="Etsi..">
                 <label id="username"></label>
                 <ul class="nav navbar-nav navbar-right">
@@ -264,7 +279,7 @@
                     <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li id="cartsum"><a href="/Sites/Cart.html">Ostoskori</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori  <span id="cartsum"></span> kpl</a></li>
                 </ul>
             </div>
         </div>
@@ -301,7 +316,6 @@
                 </div>
             </div>
         </form>
-
     </div>
 
     <footer class="container-fluid text-center">

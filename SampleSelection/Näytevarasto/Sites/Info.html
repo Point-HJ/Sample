@@ -8,6 +8,30 @@
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+             // ostoskorin tiedot
+            $.ajax({
+                type: 'GET',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+
+            }).then(function (data) {
+                let counter = 0;
+                $.each(data, function (index, val) {
+                    let uname = JSON.parse(localStorage.getItem('userName'));
+                    if (val.CompanyID == uname && val.IsInCart == true) {
+                        counter = counter + 1;
+                    }
+                });
+                $('#cartsum').append(counter);
+
+            })
+        });
+    </script>
 </head>
 <body>
     <div class="jumbotron">
@@ -49,14 +73,28 @@
                 <div class="container">
                     <h2>Sivuston käyttöohje</h2>
                     <h4>
-                        Kirjaudu sisään saamillasi tunnuksilla osoitteessa www.stgchannel.fi Google Chrome - tai Microsoft Edge -selaimella. Sivusto ei tue Internet Explorer-selainta.
-                        Etusivulla on suomenkielinen valikoima. Voit vaihtaa ruotsinkieliseen valikoimaan klikkaamalla navigointipaneelista ruotsinkielista valikoimaa.
-                        Valitse haluamasi tuotteet kummastakin valikoimasta klikkaamalla ostoskorin kuvaa. Voit valita jokaisen tuotteen vain yhden kerran.
-                        Kun olet valinnut haluamasi tuotteet, siirry navigointipaneelista ostoskori-sivulle.
-                        Voit poistaa tuotteita ostoskorista klikkaamalla roskakoria tuotteen kohdalla.
+                        Kirjaudu sisään saamillasi tunnuksilla osoitteessa www.stgchannel.fi. Käytä Google Chrome-, Microsoft Edge- tai Firefox-selainta. Sivusto ei tue Internet Explorer-selainta.
+                        <br />
+                        <br />
+                        Etusivulla on suomenkielinen valikoima. Voit vaihtaa ruotsinkieliseen valikoimaan navigointipaneelista.
+                        <br />
+                        <br />
+                        Valitse haluamasi tuotteet klikkaamalla ostoskorin kuvaa. Voit valita jokaisen tuotteen vain kerran.
+                        <br />
+                        <br />
+                        Voit poistaa tuotteita ostoskorista klikkaamalla tuotteen kohdalla roskakoria.
+                        <br />
+                        <br />
                         Kun olet valinnut kaikki haluamasi tuotteet ostoskoriin, paina Lähetä tilaus -painiketta.
+                        <br />
+                        <br />
                         <strong><u>Muista että voit tilata vain yhden kerran kaudessa!</u></strong>
+                        <br />
+                        <br />
                         Näet tilatut tuotteet tilaushistoriassa kun olet lähettänyt tilauksen.
+                        <br />
+                        <br />
+                        Ongelmatilanteessa ota yhteyttä tilaukset@kirjakeskus.fi
 
                     </h4>
                 </div>

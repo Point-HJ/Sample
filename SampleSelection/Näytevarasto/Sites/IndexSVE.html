@@ -8,14 +8,10 @@
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
-   
+
     <script>
         //Lataa tietoja -teksti
-        $(document).ajaxStart(function () {
-            $("#loading").show();
-        }).ajaxStop(function () {
-            $("#loading").hide('slow');
-        });
+     
 
         //sivun alustus
         $(document).ready(function () {
@@ -34,28 +30,26 @@
             });
             //käyttäjätunnus localStoragesta
             $('#username').text(JSON.parse(localStorage.getItem('userName')));
+            // ostoskorin tiedot
+            $.ajax({
+                type: 'GET',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+            }).then(function (data) {
+                let counter = 0;
+                $.each(data, function (index, val) {
+                    let uname = JSON.parse(localStorage.getItem('userName'));
+                    if (val.CompanyID == uname && val.IsInCart == true) {
+                        counter = counter + 1;
+                    }
+                });
+                $('#cartsum').empty().append(counter);
 
-            //ostoskorin tiedot
-            //$.ajax({
-            //    type: 'GET',
-            //    url: '/api/Carts',
-            //    dataType: 'json',
-            //    headers: {
-            //        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-            //    },
-            //    success: function (data) {
+            })
 
-            //        let counter = 0;
-            //        $.each(data, function (index, val) {
-            //            let uname = JSON.parse(localStorage.getItem('userName'));
-            //            if (val.CompanyID == uname && val.IsInCart == true) {
-            //                counter = counter + 1;
-            //            }
-            //        });
-            //        $('#cartsum').append(counter);
-            //    }
-            //})
-            //haetaan ruotsinkielinen valikoima tietokannasta
             $.ajax({
                 type: 'GET',
                 url: '/api/Selections',
@@ -114,6 +108,7 @@
                     //klikatessa ostoskoria, klikatun rivin tiedot etsitään ja tallennetaan ostoskoriin, jos käyttäjä ei ole vielä tehnyt tilausta
                     $(".glyphicon-shopping-cart").on("click", function (e) {
                         e.preventDefault();
+
                         $(this).css("color", "#29d646");
                         var BookID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         $.ajax({
@@ -140,28 +135,27 @@
 
 
 
-                                                    //var startdate = season.StartDate;
-                                                    //var start = Date.parse(startdate);
-                                                    // var stopdate = season.StopDate;
-                                                    //var stop = Date.parse(stopdate);
-                                                    //var thisdate = new Date();
-                                                    //var now = Date.parse(thisdate);
-                                                    var datefrom = ('1-7-2020'); //MMddYYYY
-                                                    var dateto = ('1-31-2020');//MMddYYYY
-                                                    var thisdate = new Date();
-                                                    var from = Date.parse(datefrom);
-                                                    var to = Date.parse(dateto);
-                                                    var now = Date.parse(thisdate);
+                                            //var startdate = season.StartDate;
+                                            //var start = Date.parse(startdate);
+                                            // var stopdate = season.StopDate;
+                                            //var stop = Date.parse(stopdate);
+                                            //var thisdate = new Date();
+                                            //var now = Date.parse(thisdate);
+                                            var datefrom = ('1-1-2020'); //MMddYYYY
+                                            var dateto = ('1-31-2020');//MMddYYYY
+                                            var thisdate = new Date();
+                                            var from = Date.parse(datefrom);
+                                            var to = Date.parse(dateto);
+                                            var now = Date.parse(thisdate);
 
 
 
-                                                    //    console.log('Start ' + start + ' Now ' + now + ' Stop ' + stop)
-                                                    if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && now <= to && now >= from) {
-                                                        console.log('Tilaus on jo tehty');
-                                                        orderdone = true;
-                                                        $(".glyphicon-shopping-cart").css("color", "#c90c1c");
-                                                        $("#orderdone").text("Tilaus on jo tehty tälle kaudelle ");
-                                                    }
+                                            if (ord.CompanyID == JSON.parse(localStorage.getItem('userName')) && ord.IsInCart == false && now <= to && now >= from) {
+                                                //  console.log('Tilaus on jo tehty');
+                                                orderdone = true;
+                                                $(".glyphicon-shopping-cart").css("color", "#c90c1c");
+                                                $("#orderdone").text("Tilaus on jo tehty tälle kaudelle ");
+                                            }
 
                                             //    },
                                             //    error: function () {
@@ -175,7 +169,7 @@
                                             var present = false;
                                             $.each(cart, function (i, carts) {
                                                 if (carts.CompanyID == JSON.parse(localStorage.getItem('userName')) && carts.ISBN == sel.ISBN) {
-                                                   // alert('Tuote on jo ostoskorissa');
+                                                    // alert('Tuote on jo ostoskorissa');
                                                     present = true;
                                                 }
                                             })
@@ -196,8 +190,25 @@
                                                     url: '/api/Carts',
                                                     data: toCart,
                                                     success: function () {
-                                                        console.log('Added to cart ' + BookID);
-                                                       // location.reload();
+                                                        // ostoskorin tiedot
+                                                        $.ajax({
+                                                            type: 'GET',
+                                                            url: '/api/Carts',
+                                                            dataType: 'json',
+                                                            headers: {
+                                                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                                                            },
+                                                        }).then(function (data) {
+                                                            let counter = 0;
+                                                            $.each(data, function (index, val) {
+                                                                let uname = JSON.parse(localStorage.getItem('userName'));
+                                                                if (val.CompanyID == uname && val.IsInCart == true) {
+                                                                    counter = counter + 1;
+                                                                }
+                                                            });
+                                                            $('#cartsum').empty().append(counter);
+
+                                                        })
                                                     },
                                                     error: function () {
                                                         alert('Virhe!');
@@ -276,7 +287,8 @@
                     <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
                     <li><a href="/Sites/History.html">Tilaushistoria</a></li>
                     <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html">Ostoskori</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori  <span id="cartsum"></span> kpl</a></li>
+
 
                 </ul>
             </div>
@@ -306,11 +318,7 @@
                 <br>
                 <br>
                 <br>
-                <div class="form-group">
-                    <div class="container">
-                        <div class="row col-md-8" id="loading"><h2>Lataa tietoja, odota hetki</h2></div>
-                    </div>
-                </div>
+               
             </div>
         </form>
 

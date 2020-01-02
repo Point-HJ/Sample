@@ -20,8 +20,8 @@
 
         //haetaan tiedot tietokannasta
         $(document).ready(function () {
-            if (localStorage.getItem('accessToken') == null) {
-                location.href = "/login.html"
+            if (localStorage.getItem('accessToken') == null || localStorage.getItem('userName') != ('"100"')) {
+                location.href = "/management/mgmlogin.html"
             }
 
             //uloskirjautuminen
@@ -256,7 +256,7 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>STGchannel.fi / Management</h1>
+            <h1>STG Management</h1>
         </div>
     </div>
 
