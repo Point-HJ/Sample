@@ -49,7 +49,7 @@
             }
             //uloskirjautuminen
             $('#logout').click(function () {
-                var ok = confirm('Haluatko varmasti kirjautua ulos?');
+                var ok = confirm('Haluatko varmasti kirjautua ulos? Vill du logga ut?');
                 if (ok == true) {
                     localStorage.clear;
                     location.href = "login.html";
@@ -153,19 +153,24 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width:7%;height:7%;">
-                <input id="search" type="text" placeholder="Etsi..">
+                <input id="search" type="text" placeholder="Etsi / Söka..">
                 <label id="companyname"></label>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
-                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html">Ostoskori  <span id="cartsum"></span> kpl</a></li>
-
-
-
+                    <li>
+                        <a href="https://www.kirjakeskus.fi/tietosuojaseloste/" target="_blank">
+                            Tietosuojaseloste / Sekretesspolicy
+                        </a>
+                    </li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima / Utbudet</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima / Utbudet</a></li>
+                    <li>
+                        <a href="/Sites/History.html">
+                            Tilaushistoria / Orderhistorik
+                        </a>
+                    </li>
+                    <li id="logout"><a href="#">Kirjaudu ulos / Logga ut</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori / Varukorg  <span id="cartsum"></span> kpl / st</a></li>
                 </ul>
             </div>
         </div>
@@ -175,17 +180,17 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h3>Tilaushistoria</h3>
+                    <h3>Tilaushistoria / Orderhistorik</h3>
                     <table class="table table-bordered" id="selection_table">
                         <thead>
                             <tr>
                                 <th hidden>OrderID</th>
-                                <th>Tilauspvm <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tilauspvm / Orderdatum <span class="glyphicon glyphicon-sort"></span></th>
                                 <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä / Författare <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Nimi / Titel <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja / Förlag <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta / Pris (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
                             </tr>
                         </thead>
                     </table>

@@ -10,8 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
 
     <script>
-        //Lataa tietoja -teksti
-     
+             
 
         //sivun alustus
         $(document).ready(function () {
@@ -22,7 +21,7 @@
             }
             //uloskirjautuminen
             $('#logout').click(function () {
-                var ok = confirm('Haluatko varmasti kirjautua ulos?');
+                var ok = confirm('Haluatko varmasti kirjautua ulos? Vill du logga ut?');
                 if (ok == true) {
                     localStorage.removeItem('accessToken');
                     location.href = "/Sites/login.html";
@@ -154,7 +153,7 @@
                                                 //  console.log('Tilaus on jo tehty');
                                                 orderdone = true;
                                                 $(".glyphicon-shopping-cart").css("color", "#c90c1c");
-                                                $("#orderdone").text("Tilaus on jo tehty tälle kaudelle ");
+                                                $("#orderdone").text("Tilaus on jo tehty tälle kaudelle / Order redan gjord för denna period");
                                             }
 
                                             //    },
@@ -278,18 +277,24 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width:7%;height:7%;">
-                <input id="search" type="text" placeholder="Etsi..">
+                <input id="search" type="text" placeholder="Etsi / Söka..">
                 <label id="username"></label>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
-                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html">Ostoskori  <span id="cartsum"></span> kpl</a></li>
-
-
+                    <li>
+                        <a href="https://www.kirjakeskus.fi/tietosuojaseloste/" target="_blank">
+                            Tietosuojaseloste / Sekretesspolicy
+                        </a>
+                    </li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima / Utbudet</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima / Utbudet</a></li>
+                    <li>
+                        <a href="/Sites/History.html">
+                            Tilaushistoria / Orderhistorik
+                        </a>
+                    </li>
+                    <li id="logout"><a href="#">Kirjaudu ulos / Logga ut</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori / Varukorg  <span id="cartsum"></span> kpl / st</a></li>
                 </ul>
             </div>
         </div>
@@ -300,16 +305,16 @@
             <div class="form-group">
                 <div class="container">
                     <h1 id="orderdone"></h1>
-                    <h2>Ruotsinkielinen valikoima</h2>
+                    <h2>Ruotsinkielinen valikoima / svenskspråkiga utbudet</h2>
                     <table class="table table-bordered" id="selection_table">
                         <thead>
                             <tr>
                                 <th hidden>BookID</th>
                                 <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Hinta (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä / Författare <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Nimi / Titel <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja / Förlag <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta / Pris (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
                                 <th></th>
                             </tr>
                         </thead>

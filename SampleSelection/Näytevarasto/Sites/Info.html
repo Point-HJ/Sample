@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
     <script>
         $(document).ready(function () {
-             // ostoskorin tiedot
+            // ostoskorin tiedot
             $.ajax({
                 type: 'GET',
                 url: '/api/Carts',
@@ -30,6 +30,14 @@
                 $('#cartsum').append(counter);
 
             })
+             //uloskirjautuminen
+            $('#logout').click(function () {
+                var ok = confirm('Haluatko varmasti kirjautua ulos? Vill du logga ut?');
+                if (ok == true) {
+                    localStorage.removeItem('accessToken');
+                    location.href = "/Sites/login.html";
+                }
+            });
         });
     </script>
 </head>
@@ -53,16 +61,24 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width: 7%; height: 7%;
 ">
-                <input id="search" type="text" placeholder="Etsi..">
+                <input id="search" type="text" placeholder="Etsi / Söka..">
                 <label id="username"></label>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
-                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span id="cartsum"> </span> Kpl <span class="pricesum"> </span></a></li>
+                    <li>
+                        <a href="https://www.kirjakeskus.fi/tietosuojaseloste/" target="_blank">
+                            Tietosuojaseloste / Sekretesspolicy
+                        </a>
+                    </li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima / Utbudet</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima / Utbudet</a></li>
+                    <li>
+                        <a href="/Sites/History.html">
+                            Tilaushistoria / Orderhistorik
+                        </a>
+                    </li>
+                    <li id="logout"><a href="#">Kirjaudu ulos / Logga ut</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori / Varukorg  <span id="cartsum"></span> kpl / st</a></li>
                 </ul>
             </div>
         </div>
@@ -95,10 +111,43 @@
                         <br />
                         <br />
                         Ongelmatilanteessa ota yhteyttä tilaukset@kirjakeskus.fi
-
+                        <br />
+                        <br />
+                        <br />
                     </h4>
+                    <h2>Instruktioner för användare</h2>
+                    <h4>
+                        Logga in med de lösen du fått på www.stgchannel.fi. Använd Google Chrome-, Microsoft Edge- eller Firefox webbläddrare. Sidan stöder inte Internet Explorer.
+                        <br />
+                        <br />
+                        Det finska utbudet finns på framsidan. Du kan byta till det svenskspråkiga utbudet i navigeringspanelen.
+                        <br />
+                        <br />
+                        Välj produkten du önskar beställa genom att klicka på varukorgen. Du kan välja samma produkt enbart en gång.
+                        <br />
+                        <br />
+                        Du kan ta bort produkter från varukorgen genom att klick på roskkorgen, vid den produkt du önskar ta bort.
+                        <br />
+                        <br />
+                        När du valt alla de produkter du önskar beställa, tryck på Skicka order - knappen.
+                        <br />
+                        <br />
+                        <strong>
+                            <u>
+                                Observera att du kan beställa Provlagerböcker endast en gång per period , då du tryckt på Skicka order knappen kan du inte lägga in en ny order!
+                            </u>
+                        </strong>
+                        <br />
+                        <br />
+                        Du ser de beställda böckerna i orderhistoriken, när du har skickat beställningen.
+                        <br />
+                        <br />
+                        Om du har problem med beställningen ber vi dig kontakta, tilaukset @kirjakeskus.fi
+                    </h4>
+
+
                 </div>
-               
+
             </div>
         </form>
 

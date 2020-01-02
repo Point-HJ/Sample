@@ -24,7 +24,7 @@
             }
             //uloskirjautuminen
             $('#logout').click(function () {
-                var ok = confirm('Haluatko varmasti kirjautua ulos?');
+                var ok = confirm('Haluatko varmasti kirjautua ulos? Vill du logga ut?');
                 if (ok == true) {
                     localStorage.clear;
                     location.href = "/Sites/login.html";
@@ -32,6 +32,25 @@
             });
             $('#companyname').text(JSON.parse(localStorage.getItem('userName')));
 
+             // ostoskorin tiedot navigointipaneeliin
+            $.ajax({
+                type: 'GET',
+                url: '/api/Carts',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
+            }).then(function (data) {
+                let counter = 0;
+                $.each(data, function (index, val) {
+                    let uname = JSON.parse(localStorage.getItem('userName'));
+                    if (val.CompanyID == uname && val.IsInCart == true) {
+                        counter = counter + 1;
+                    }
+                });
+                $('#cartsum').empty().append(counter);
+
+            })
 
             //haetaan ostoskorin tiedot CompanyID:n perusteella
             $.ajax({
@@ -76,7 +95,7 @@
                     $(".glyphicon-trash").on("click", function () {
                         var OrderID = $(this).parent().parent().prev().prev().prev().prev().prev().prev().text();
                         var ISBN = $(this).parent().parent().prev().prev().prev().prev().prev().text();
-                        var ok = confirm("Haluatko poistaa tuotteen " + ISBN + " ostoskorista? ");
+                        var ok = confirm("Haluatko poistaa tuotteen " + ISBN + " ostoskorista? Vill du radera ordern på " + ISBN + " från varukorgen? ");
 
                         if (ok == true) {
                             $.ajax({
@@ -85,7 +104,7 @@
                                 contentType: 'application/json',
                                 global: false,
                                 success: function () {
-                                    alert('Tuote poistettu');
+                                    alert('Tuote poistettu. Produkten är annullerad');
                                     location.reload(); //sivun uudelleen lataus
                                 },
                                 error: function () {
@@ -108,8 +127,8 @@
 
                     $('#send').click(function (e) {
                         e.preventDefault();
-                        var ok = confirm("Haluatko varmasti lähettää tilauksen? Voit tehdä vain yhden tilauksen tälle kaudelle. ");
-                        if (ok == true) {
+                        var ok = confirm("Haluatko varmasti lähettää tilauksen? Voit tehdä vain yhden tilauksen tälle kaudelle. Är du säker att du vill avsluta ordern? Observera att du kan göra enbart en order på denna period. ");
+                            if (ok == true) {
                             $.ajax({
                                 type: 'GET',
                                 url: '/api/carts/',
@@ -150,7 +169,7 @@
                                             });
                                         }
                                     });
-                                    alert('Tilaus lähetetty');
+                                    alert('Tilaus on lähetetty. Ordern är skickad.');
                                 }
                             });
                         }
@@ -158,7 +177,7 @@
                 },
             });
 
-             //etsi -toiminto
+            //etsi -toiminto
             $("#search").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
                 $("#selection_table tr").filter(function () {
@@ -179,9 +198,7 @@
                     .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
                     .forEach(tr => table.appendChild(tr));
             })));
-
         });
-
     </script>
 
 </head>
@@ -205,17 +222,24 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <img src="../Content/Images/pkirjakeskus_logo2018_nega_RGB.png" alt="Logo" style="width:7%;height:7%;">
-                <input id="search" type="text" placeholder="Etsi..">
+                <input id="search" type="text" placeholder="Etsi / Söka..">
                 <label id="companyname"></label>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/Sites/info.html"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                    <li><a href="https://www.kirjakeskus.fi/tietosuojaseloste/">Tietosuojaseloste</a></li>
-                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima</a></li>
-                    <li><a href="/Sites/History.html">Tilaushistoria</a></li>
-                    <li id="logout"><a href="#">Kirjaudu ulos</a></li>
-                    <li><a href="/Sites/Cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cartsum"> </span> Kpl <span class="pricesum"> </span>€</a></li>
-
+                    <li>
+                        <a href="https://www.kirjakeskus.fi/tietosuojaseloste/" target="_blank">
+                            Tietosuojaseloste / Sekretesspolicy
+                        </a>
+                    </li>
+                    <li><a href="/Sites/Index.html"><span class="flag-icon flag-icon-fi" style="height: 20px "></span>  Valikoima / Utbudet</a></li>
+                    <li><a href="/Sites/IndexSVE.html"><span class="flag-icon flag-icon-se" style="height:20px"></span>  Valikoima / Utbudet</a></li>
+                    <li>
+                        <a href="/Sites/History.html">
+                            Tilaushistoria / Orderhistorik
+                        </a>
+                    </li>
+                    <li id="logout"><a href="#">Kirjaudu ulos / Logga ut</a></li>
+                    <li><a href="/Sites/Cart.html">Ostoskori / Varukorg  <span id="cartsum"></span> kpl / st</a></li>
                 </ul>
             </div>
         </div>
@@ -225,16 +249,16 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="container">
-                    <h3>Ostoskorissa <span class="cartsum"></span> tuotetta</h3>
+                    <h3>Ostoskorissa <span class="cartsum"></span> tuotetta / Antal produkter i varukorgen <span class="cartsum"></span></h3>
                     <table class="table table-bordered" id="selection_table">
                         <thead>
                             <tr>
                                 <th hidden>OrderID</th>
                                 <th>ISBN <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Tekijä <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kirjan nimi <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Kustantaja <span class="glyphicon glyphicon-sort"></span></th>
-                                <th>Hinta (alv 0) <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Tekijä / Författare <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Nimi / Titel <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Kustantaja / Förlag <span class="glyphicon glyphicon-sort"></span></th>
+                                <th>Hinta / Pris (alv 0%) <span class="glyphicon glyphicon-sort"></span></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -243,23 +267,26 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4"></div>
-                        <div class="col-md-4" style="font-size:22px">Hinta yhteensä <span class="pricesum"></span> €</div>
+                        <div class="col-md-4" style="font-size:22px">Hinta yhteensä / Totalt pris <span class="pricesum"></span> €</div>
                     </div>
                     <br />
                     <br />
                     <br />
                     <div class="row">
                         <div class="col-md-8"></div>
-                        <div class="col-md-2" style="font-size: 14px"><a href="/Sites/Index.html">Palaa takaisin valikoimaan</a></div>
+                        <div class="col-md-2" style="font-size: 14px"><a href="/Sites/Index.html">
+    Palaa takaisin valikoimaan / Gå tillbaka till produktlistan</a></div>
                         <div class="col-md-2">
-                            <button type="submit" id="send" class="btn button1">Lähetä tilaus</button>
+                            <button type="submit" id="send" class="btn button1">
+                                Lähetä tilaus / Skicka order
+                            </button>
                         </div>
                     </div>
                 </div>
                 <br>
                 <br>
                 <br>
-               
+
             </div>
         </form>
     </div>
