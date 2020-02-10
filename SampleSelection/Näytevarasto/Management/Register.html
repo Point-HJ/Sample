@@ -20,6 +20,26 @@
               if (localStorage.getItem('accessToken') == null || localStorage.getItem('userName') != ('"100"')) {
                 location.href = "/management/mgmlogin.html"
             }
+              var $RoleName = $('#role');
+            
+            //lisätään Ajax-kutsun hakemat roolit sivulle
+            function addRole(role) {
+                $RoleName.append('<option>' + role + ' </option>');
+            }
+             //Ajax-kutsu /api/role
+            $.ajax({
+                type: 'GET',
+                url: '/api/AspNetRoles',
+                dataType: 'json',
+                success: function (roles) {
+                    $.each(roles, function (i, role) {
+                        addRole(role.Name);
+                    });
+                },
+                error: function () {
+                    alert: ('Virhe ladattaessa rooleja')
+                }
+            });
 
             $('#btnRegister').click(function () {
                 $.ajax({
@@ -76,6 +96,16 @@
                         <td>Sähköposti</td>
                         <td>
                             <input type="text" id="txtEmail" placeholder="Sähköposti" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Rooli</td>
+                        <td>
+                            <div class="dropdown">
+                                <select class="btn button1" type="button" data-toggle="dropdown" id="role">
+                                    <option></option>
+                                </select>
+                            </div>
                         </td>
                     </tr>
                     <tr>

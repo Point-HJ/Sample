@@ -1,12 +1,22 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+
+    <!--Käsin muutettavia kohtia, kun valikoimakausi vaihtuu:
+    Index + IndexSve
+    Rivi 79/SVE 61, tuotteen kausi
+    Rivi 148-149 Ajanjakso, joka rajaa 1 tilauksen/kausi
+    Cart
+    Rivi 153, reference vaihdettava kauden mukaan-->
+
+
     <title>STGchannel.fi</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
 
     <script>
@@ -52,7 +62,7 @@
                         counter = counter + 1;
                     }
                 });
-                $('#cartsum').append(counter);
+                $('#cartsum').empty().append(counter);
 
             })
 
@@ -141,7 +151,7 @@
                                         $.each(cart, function (i, ord) {
 
                                             var datefrom = ('1-1-2020'); // MM-DD-YYYY Valikoiman ensimmäinen tilauspäivä
-                                            var dateto = ('1-31-2020'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
+                                            var dateto = ('6-30-2020'); // MM-DD-YYYY Valikoiman viimeinen tilauspäivä
                                             var thisdate = new Date();
                                             //Date.parse jäsentää päivämäärämerkkijonon ja palauttaa millisekuntien lukumäärän päivämäärämerkkijonon ja 1. tammikuuta 1970 keskiyön välillä.
                                             var from = Date.parse(datefrom);
@@ -180,7 +190,7 @@
                                                     type: 'post',
                                                     url: '/api/Carts',
                                                     data: toCart,
-                                                    success: function (cart) {
+                                                    success: function () {
                                                         // ostoskorin tiedot
                                                         $.ajax({
                                                             type: 'GET',
@@ -335,6 +345,6 @@
         <form class="form-inline">
         </form>
     </footer>
-
+   
 </body>
 </html>

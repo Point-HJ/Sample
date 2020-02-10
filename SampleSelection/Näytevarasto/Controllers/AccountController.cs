@@ -360,6 +360,8 @@ namespace Näytevarasto.Controllers
                 UserName = model.CompanyID,
                 Email = model.Email,
                 CompanyName = model.CompanyName,
+                Password = model.Password,
+              
             };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
@@ -367,7 +369,8 @@ namespace Näytevarasto.Controllers
             var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
             var adminUser = manager.FindByName(model.CompanyID);
 
-            manager.AddToRoles(adminUser.Id, new string[] { "User" });
+             manager.AddToRoles(adminUser.Id, new string[] { "User" });
+           
 
             if (!result.Succeeded)
             {

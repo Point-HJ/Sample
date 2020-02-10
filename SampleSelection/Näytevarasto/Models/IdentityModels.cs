@@ -23,6 +23,8 @@ namespace Näytevarasto.Models
         public string CompanyName { get; set; }
         public int CompanyID { get; set; }
 
+        public string Password { get; set; }
+       
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

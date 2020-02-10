@@ -249,6 +249,7 @@
       <DependentUpon>STGmodel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AspNetRolesController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\CartsController.cs" />
     <Compile Include="Controllers\LanguagesController.cs" />

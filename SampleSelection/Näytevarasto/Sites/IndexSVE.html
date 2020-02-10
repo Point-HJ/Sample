@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="../Content/MyStyle.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
 
     <script>
-             
+
 
         //sivun alustus
         $(document).ready(function () {
@@ -126,22 +127,9 @@
                                     success: function (cart) {
                                         var orderdone = false;
                                         $.each(cart, function (i, ord) {
-                                            //$.ajax({
-                                            //    type: 'GET',
-                                            //    url: '/api/seasons',
-                                            //    dataType: 'json',
-                                            //    success: function (seasons) {
-
-
-
-                                            //var startdate = season.StartDate;
-                                            //var start = Date.parse(startdate);
-                                            // var stopdate = season.StopDate;
-                                            //var stop = Date.parse(stopdate);
-                                            //var thisdate = new Date();
-                                            //var now = Date.parse(thisdate);
+                                           
                                             var datefrom = ('1-1-2020'); //MMddYYYY
-                                            var dateto = ('1-31-2020');//MMddYYYY
+                                            var dateto = ('6-30-2020');//MMddYYYY
                                             var thisdate = new Date();
                                             var from = Date.parse(datefrom);
                                             var to = Date.parse(dateto);
@@ -155,12 +143,7 @@
                                                 $(".glyphicon-shopping-cart").css("color", "#c90c1c");
                                                 $("#orderdone").text("Tilaus on jo tehty tälle kaudelle / Order redan gjord för denna period");
                                             }
-
-                                            //    },
-                                            //    error: function () {
-                                            //        alert: ('Virhe ladattaessa kausia')
-                                            //    }
-                                            //});
+                                          
                                         })
 
                                         //check if Book is in cart already
