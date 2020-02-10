@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Lisää rooli</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!--<link href="Content/MyStyle.css" rel="stylesheet" />-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            var $RoleName = $('#txtRole');
+
+            $('#btnAddRole').click(function () {
+                $.ajax({
+                    url: '/api/roles/create',
+                    method: 'post',
+                    data: {
+                        Name: $('#txtRole').val(),
+                    },
+                    success: function () {
+                        console.log('OK');
+                        alert('Roolin lisäys onnistui')
+                        location.reload();
+                    },
+                    error: function (jqXHR) {
+                        console.log(jqXHR.responseText);
+                        alert('Roolin lisäys epäonnistui, yritä uudelleen')
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="success">
+                        <td colspan="2">
+                            Uusi rooli
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rooli</td>
+                        <td>
+                            <input type="text" id="txtRole" placeholder="Rooli" />
+                        </td>
+                    </tr>
+
+                    <tr class="success">
+                        <td colspan="2">
+                            <input id="btnAddRole" class="btn btn-success" type="button" value="Lisää rooli" />
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

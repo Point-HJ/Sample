@@ -328,6 +328,7 @@
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\Images\pkirjakeskus_logo2018_nega_RGB.png" />
     <Content Include="Management\MgmLogin.html" />
+    <Content Include="Management\Roles.html" />
     <Content Include="Management\Test.html" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
